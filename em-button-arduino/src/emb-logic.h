@@ -1,4 +1,4 @@
-#include "emb-data.h"
+#include "emb-serial.h"
 
 bool keylock = 0; // lock the key from being pressed temporarily
 bool isConnected = 0; // check if keyboard is connected before attempting to send data
@@ -21,6 +21,7 @@ void keyboardLogic(Emb emb) {
   if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keylock) {
 
     emb.keyboard.write(emb.keyData.keyID);
+    test();
 
     keylock = 1;
 

@@ -16,6 +16,7 @@ struct EmbButtonData {
 };
 
 struct EmbButton {
+    uint8_t id;
     uint8_t keyID = 'B';
     double output_v, activation_point;
     EmbButtonData buttonData;

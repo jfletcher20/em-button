@@ -1,13 +1,17 @@
 #include <Arduino.h>
 #include <stdio.h>
 
+#include "emb-hall-filter.h"
 #include "emb-logic.h"
+
+#define HALL_PIN 4
 
 Emb emb;
 
 void setup() {
 
   pinMode(emb.keyData.buttonData.pin, INPUT);
+  pinMode(4, INPUT);
 
   Serial.begin(115200);
   emb.keyboard.begin();
@@ -20,6 +24,6 @@ void loop() {
 
   getConnectionStatusUpdate(emb);
   keyboardLogic(emb);
-  // serialLogic(emb);
+  denoise(HALL_PIN);
 
 }
