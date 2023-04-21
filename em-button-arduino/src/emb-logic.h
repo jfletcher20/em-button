@@ -1,3 +1,4 @@
+#pragma once
 #include "emb-serial.h"
 
 bool keylock = 0; // lock the key from being pressed temporarily

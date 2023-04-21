@@ -1,3 +1,4 @@
+#pragma once // maybe make it so that only ArduinoJson is passed on multiple times?
 #include <ArduinoJson.h>
 #include "emb-db.h"
 

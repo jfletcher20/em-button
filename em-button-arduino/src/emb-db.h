@@ -1,3 +1,4 @@
+#pragma once
 #include "emb-data.h"
 #include <SPIFFS.h>
 
