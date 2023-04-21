@@ -7,7 +7,7 @@ unsigned long long int timesPressed = 0; // track how many times the button is p
 
 void keyboardLogic(Emb emb) {
 
-  // manages keylock duration
+  // manages keylock duration (debouncing)
   if(digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.inactive && keylock) {
     if(blockTime == 0) {
       blockTime = millis();
@@ -21,9 +21,6 @@ void keyboardLogic(Emb emb) {
   if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keylock) {
 
     emb.keyboard.write(emb.keyData.keyID);
-    
-    emb.serial.print("Keypress detected. ");
-    emb.serial.println(++timesPressed);
 
     keylock = 1;
 
@@ -31,11 +28,19 @@ void keyboardLogic(Emb emb) {
 
 }
 
-void serialLogic(Emb emb) {
-  if (emb.serial.available() > 0) {
-    String c = emb.serial.readString();
-    c.trim();
-    Serial.println("Received: " + c);
-    emb.serial.println("Received: " + c);
-  }
+void getConnectionStatusUpdate(Emb& emb) {
+
+    // part to act as keyboard for registering keypresses on the computer
+    if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
+        Serial.print(emb.name);
+        Serial.println(": Keyboard connected!");
+        emb.connectionStatus.keyboardConnected = 1;
+    }
+
+    if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
+        Serial.print(emb.name);
+        Serial.println(": Keyboard disconnected! Searching for connections...");
+        emb.connectionStatus.keyboardConnected = 0;
+    }
+
 }
