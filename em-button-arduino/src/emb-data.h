@@ -5,14 +5,14 @@ struct EmbConnectionState {
     bool serialConnected = false;
 };
 
-struct EmbActiveState {
-    int active = HIGH, inactive = LOW;
+struct EmbStateThresholds {
+    const int active = HIGH, inactive = LOW;
 };
 
 typedef int Pin;
 struct EmbButtonData {
-    Pin pin = 2;
-    EmbActiveState state;
+    const Pin pin = 2;
+    const EmbStateThresholds state;
 };
 
 struct EmbButton {
@@ -23,9 +23,9 @@ struct EmbButton {
 };
 
 struct Emb {
-    char name[20] = "ESP32 Emb Keyboard";
-    char manufacturer[20] = "IoT Lab, FOI";
-    EmbConnectionState connectionStatus;
+    const char name[20] = "ESP32 Emb Keyboard";
+    const char manufacturer[20] = "IoT Lab, FOI";
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
+    EmbConnectionState connectionStatus;
     EmbButton keyData;
 };
