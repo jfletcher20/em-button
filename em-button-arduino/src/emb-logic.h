@@ -1,30 +1,38 @@
 #pragma once
 #include "emb-serial.h"
 
-bool keylock = 0; // lock the key from being pressed temporarily
-bool isConnected = 0; // check if keyboard is connected before attempting to send data
-unsigned long blockTime = 0; // debouncing time
-unsigned long long int timesPressed = 0; // track how many times the button is pressed for stats
+#define DELAY 100 // debouncing delay
+// perhaps a second delay check can be added to emulate key repeat
+
+// placed in struct to prevent confusion when using the header elsewhere
+struct EmbKeyBlock {
+  bool keyLock = 0; // lock the key from being pressed temporarily
+  bool isConnected = 0; // check if keyboard is connected before attempting to send data
+  unsigned long blockTime = 0; // measures time
+  unsigned long long int timesPressed = 0; // tracks button press count for stats
+} keyBlock;
 
 void keyboardLogic(Emb emb) {
 
   // manages keylock duration (debouncing)
-  if(digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.inactive && keylock) {
-    if(blockTime == 0) {
-      blockTime = millis();
+  if(digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.inactive && keyBlock.keyLock) {
+    if(keyBlock.blockTime == 0) {
+      keyBlock.blockTime = millis();
     } else {
-      if(millis() - blockTime >= 100)
-        keylock = blockTime = 0;
+      if(millis() - keyBlock.blockTime >= DELAY)  {
+        keyBlock.keyLock = keyBlock.blockTime = 0;
+        keyBlock.timesPressed++;
+      }
     }
   }
 
   // manages keypress
-  if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keylock) {
+  if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keyBlock.keyLock) {
 
     emb.keyboard.write(emb.keyData.keyID);
     test();
 
-    keylock = 1;
+    keyBlock.keyLock = 1;
 
   }
 
