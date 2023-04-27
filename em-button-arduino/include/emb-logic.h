@@ -30,7 +30,7 @@ void keyboardLogic(Emb emb) {
   if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keyBlock.keyLock) {
 
     emb.keyboard.write(emb.keyData.keyID);
-    test();
+    test(emb);
 
     keyBlock.keyLock = 1;
 
@@ -42,14 +42,14 @@ void getConnectionStatusUpdate(Emb& emb) {
 
     // part to act as keyboard for registering keypresses on the computer
     if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
-        Serial.print(emb.name);
-        Serial.println(": Keyboard connected!");
+        emb.serial.print(emb.name);
+        emb.serial.println(": Keyboard connected!");
         emb.connectionStatus.keyboardConnected = 1;
     }
 
     if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
-        Serial.print(emb.name);
-        Serial.println(": Keyboard disconnected! Searching for connections...");
+        emb.serial.print(emb.name);
+        emb.serial.println(": Keyboard disconnected! Searching for connections...");
         emb.connectionStatus.keyboardConnected = 0;
     }
 

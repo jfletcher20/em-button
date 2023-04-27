@@ -1,4 +1,7 @@
-#include <BleKeyboard.h>  
+#include <BleKeyboard.h>
+
+#pragma once
+#include <Arduino.h>
 
 struct EmbConnectionState {
     bool keyboardConnected = false;
@@ -20,6 +23,7 @@ struct EmbButton {
     uint8_t keyID = 'B';
     double output_v, activation_point;
     EmbButtonData buttonData;
+    const Pin electromagnet = 4;
 };
 
 struct Emb {
@@ -28,4 +32,5 @@ struct Emb {
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;
+    HardwareSerial serial; // TODO: verify if this is necessary at all
 };

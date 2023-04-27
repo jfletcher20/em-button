@@ -34,13 +34,13 @@ void denoise(int HALL_PIN) {
         int diff = abs(value - average);
         if (diff > THRESHOLD) {
             // The value is noisy, skip it
-            // Serial.println(value);
+            // emb.serial.println(value);
             continue;
         }
 
         // The value is not noisy, print it
         if(average > past + 10 || average < past - 10) {
-            Serial.println(average);
+            emb.serial.println(average);
             past = average;
         }
     }

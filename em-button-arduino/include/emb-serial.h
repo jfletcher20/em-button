@@ -3,21 +3,16 @@
 #include "emb-db.h"
 
 // void serialLogic(Emb emb) {
-//   if (Serial.available() > 0) {
-//     String c = Serial.readString();
+//   if (emb.serial.available() > 0) {
+//     String c = emb.serial.readString();
 //     c.trim();
-//     Serial.println("Received: " + c);
+//     emb.serial.println("Received: " + c);
 //   }
 // }
 
-void test() {
-    EmbButtonData buttonData;
-    EmbButton embButton;
-    embButton.id = 1;
-    embButton.keyID = KEY_RETURN;
-    embButton.output_v = 5;
-    embButton.activation_point = 1;
-    embButton.buttonData = buttonData;
+void test(Emb emb) {
+
+    EmbButton embButton = emb.keyData;
 
     DynamicJsonDocument doc(1024);
     doc["id"] = embButton.id;
@@ -32,6 +27,6 @@ void test() {
     serializeJson(doc, json);
 
     // Send the JSON string over serial
-    Serial.println(json);
+    emb.serial.println(json);
 
 }
