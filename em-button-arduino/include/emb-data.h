@@ -2,6 +2,8 @@
 
 #pragma once
 #include <Arduino.h>
+#include <stdexcept>
+#include "emb-errors.h"
 
 struct EmbConnectionState {
     bool keyboardConnected = false;
@@ -24,6 +26,10 @@ struct EmbButton {
     double output_v, activation_point;
     EmbButtonData buttonData;
     const Pin electromagnet = 4;
+    std::function<void()> delegateFunction;
+    void executeDelegate() {
+        delegateFunction ? delegateFunction() : throw EMB_DELEGATE_NOT_DEFINED;
+    }
 };
 
 struct Emb {
