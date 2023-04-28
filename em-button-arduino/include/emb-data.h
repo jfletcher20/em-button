@@ -1,8 +1,8 @@
 #include <BleKeyboard.h>
 
 #pragma once
-#include <Arduino.h>
 #include <stdexcept>
+#include <Arduino.h>
 #include "emb-errors.h"
 
 struct EmbConnectionState {
@@ -11,7 +11,7 @@ struct EmbConnectionState {
 };
 
 struct EmbStateThresholds {
-    const int active = HIGH, inactive = LOW;
+    const int active = 0x1, inactive = 0x0;
 };
 
 typedef int Pin;
@@ -22,14 +22,11 @@ struct EmbButtonData {
 
 struct EmbButton {
     uint8_t id;
-    uint8_t keyID = 'B';
-    double output_v, activation_point;
+    uint8_t keyID = KEY_RETURN;
+    double output_resistance, activation_point = 1650;
     EmbButtonData buttonData;
-    const Pin electromagnet = 4;
+    const Pin electromagnet = 6, hall_sensor = 4;
     std::function<void()> delegateFunction;
-    void executeDelegate() {
-        delegateFunction ? delegateFunction() : throw EMB_DELEGATE_NOT_DEFINED;
-    }
 };
 
 struct Emb {

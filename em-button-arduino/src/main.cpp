@@ -5,8 +5,6 @@
 #include <Arduino.h>
 #include <stdio.h>
 
-#define HALL_PIN 4
-
 Emb emb;
 
 void setup() {
@@ -17,14 +15,18 @@ void setup() {
   Serial.begin(115200);
   emb.keyboard.begin();
 
-  Serial.println("Searching for connections for ESP32 Keyboard (Keys)...");
+  Serial.println(emb.manufacturer);
+  Serial.print("Searching for connections for ");
+  Serial.println(emb.name);
 
 }
 
 void loop() {
 
+  serialDataOutput(emb);
+
   getConnectionStatusUpdate(emb);
+  denoise(emb.keyData.hall_sensor);
   keyboardLogic(emb);
-  denoise(HALL_PIN);
 
 }

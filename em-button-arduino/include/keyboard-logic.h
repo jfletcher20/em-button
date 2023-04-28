@@ -25,7 +25,8 @@ void keyboardLogic(Emb emb) {
     emb.keyboard.write(emb.keyData.keyID);
     
     Serial.print("Keypress detected. ");
-    Serial.println(++timesPressed);
+    // Serial.println(++timesPressed);
+    ++timesPressed;
 
     keylock = 1;
 

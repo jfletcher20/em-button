@@ -17,7 +17,7 @@ void test(Emb emb) {
     DynamicJsonDocument doc(1024);
     doc["id"] = embButton.id;
     doc["keyID"] = embButton.keyID;
-    doc["output_v"] = embButton.output_v;
+    doc["output_v"] = embButton.output_resistance;
     doc["activation_point"] = embButton.activation_point;
     doc["buttonData"]["pin"] = embButton.buttonData.pin;
     doc["buttonData"]["state"]["active"] = embButton.buttonData.state.active;
