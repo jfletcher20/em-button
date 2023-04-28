@@ -42,14 +42,14 @@ void getConnectionStatusUpdate(Emb& emb) {
 
     // part to act as keyboard for registering keypresses on the computer
     if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
-        emb.serial.print(emb.name);
-        emb.serial.println(": Keyboard connected!");
+        Serial.print(emb.name);
+        Serial.println(": Keyboard connected!");
         emb.connectionStatus.keyboardConnected = 1;
     }
 
     if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
-        emb.serial.print(emb.name);
-        emb.serial.println(": Keyboard disconnected! Searching for connections...");
+        Serial.print(emb.name);
+        Serial.println(": Keyboard disconnected! Searching for connections...");
         emb.connectionStatus.keyboardConnected = 0;
     }
 

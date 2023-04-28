@@ -1,6 +1,6 @@
 /*void loop() {
-  if (emb.serial.available() > 0) {
-    String inputString = emb.serial.readString();
+  if (Serial.available() > 0) {
+    String inputString = Serial.readString();
     inputString.trim();
 
     String anagramString = "";
@@ -10,7 +10,7 @@
       anagramString += c;
     }
 
-    emb.serial.println("Anagram: " + anagramString);
+    Serial.println("Anagram: " + anagramString);
   }
 }
 */

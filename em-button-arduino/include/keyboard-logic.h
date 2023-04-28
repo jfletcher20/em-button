@@ -1,3 +1,5 @@
+#pragma once
+#include <Arduino.h>
 #include "emb-data.h"
 
 bool keylock = 0; // lock the key from being pressed temporarily
@@ -22,8 +24,8 @@ void keyboardLogic(Emb emb) {
 
     emb.keyboard.write(emb.keyData.keyID);
     
-    emb.serial.print("Keypress detected. ");
-    emb.serial.println(++timesPressed);
+    Serial.print("Keypress detected. ");
+    Serial.println(++timesPressed);
 
     keylock = 1;
 

@@ -32,5 +32,4 @@ struct Emb {
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;
-    HardwareSerial serial; // TODO: verify if this is necessary at all
 };

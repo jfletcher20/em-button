@@ -3,10 +3,10 @@
 #include "emb-db.h"
 
 // void serialLogic(Emb emb) {
-//   if (emb.serial.available() > 0) {
-//     String c = emb.serial.readString();
+//   if (Serial.available() > 0) {
+//     String c = Serial.readString();
 //     c.trim();
-//     emb.serial.println("Received: " + c);
+//     Serial.println("Received: " + c);
 //   }
 // }
 
@@ -27,6 +27,6 @@ void test(Emb emb) {
     serializeJson(doc, json);
 
     // Send the JSON string over serial
-    emb.serial.println(json);
+    Serial.println(json);
 
 }
