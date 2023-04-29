@@ -10,22 +10,22 @@ struct EmbConnectionState {
     bool serialConnected = false;
 };
 
-struct EmbStateThresholds {
-    const int active = 0x1, inactive = 0x0;
-};
+// struct EmbStateThresholds {
+//     const int active = 0x1, inactive = 0x0;
+// };
 
 typedef int Pin;
-struct EmbButtonData {
-    const Pin pin = 2;
-    const EmbStateThresholds state;
-};
+// struct EmbButtonData {
+//     const Pin pin = 2;
+//     const EmbStateThresholds state;
+// };
 
 struct EmbButton {
     uint8_t id;
     uint8_t keyID = KEY_RETURN;
     double output_resistance, activation_point = 1650;
-    EmbButtonData buttonData;
-    const Pin electromagnet = 6, hall_sensor = 4;
+    // EmbButtonData buttonData;
+    const Pin electromagnet = 13, hall_sensor = 4;
     std::function<void()> delegateFunction;
 };
 

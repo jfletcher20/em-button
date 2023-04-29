@@ -19,9 +19,9 @@ void test(Emb emb) {
     doc["keyID"] = embButton.keyID;
     doc["output_v"] = embButton.output_resistance;
     doc["activation_point"] = embButton.activation_point;
-    doc["buttonData"]["pin"] = embButton.buttonData.pin;
-    doc["buttonData"]["state"]["active"] = embButton.buttonData.state.active;
-    doc["buttonData"]["state"]["inactive"] = embButton.buttonData.state.inactive;
+    // doc["buttonData"]["pin"] = embButton.buttonData.pin;
+    // doc["buttonData"]["state"]["active"] = embButton.buttonData.state.active;
+    // doc["buttonData"]["state"]["inactive"] = embButton.buttonData.state.inactive;
 
     String json;
     serializeJson(doc, json);

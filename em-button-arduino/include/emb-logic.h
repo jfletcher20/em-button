@@ -33,7 +33,7 @@ void serialDataOutput(Emb emb) {
 void keyboardLogic(Emb emb) {
 
   // manages keylock duration (debouncing)
-  if(keyBlock.keyLock && degree(emb) < 0.4) {
+  if(keyBlock.keyLock && degree(emb) < 4) {
     if(keyBlock.blockTime == 0) {
       keyBlock.blockTime = millis();
     } else {
@@ -45,7 +45,7 @@ void keyboardLogic(Emb emb) {
   }
 
   // manages keypress
-  if(emb.keyboard.isConnected() && degree(emb) > 0.4 && !keyBlock.keyLock) {
+  if(emb.keyboard.isConnected() && degree(emb) > 4 && !keyBlock.keyLock) {
 
     emb.keyboard.write(emb.keyData.keyID);
     // test(emb);

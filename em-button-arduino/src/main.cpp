@@ -9,8 +9,9 @@ Emb emb;
 
 void setup() {
 
-  pinMode(emb.keyData.buttonData.pin, INPUT);
-  pinMode(4, INPUT);
+  pinMode(emb.keyData.hall_sensor, INPUT);
+  pinMode(emb.keyData.electromagnet, OUTPUT);
+  pinMode(2, OUTPUT); // blue LED
 
   Serial.begin(115200);
   emb.keyboard.begin();
@@ -24,9 +25,10 @@ void setup() {
 void loop() {
 
   serialDataOutput(emb);
-
-  getConnectionStatusUpdate(emb);
-  denoise(emb.keyData.hall_sensor);
-  keyboardLogic(emb);
+  analogWrite(emb.keyData.electromagnet, 255);
+  Serial.println(degree(emb));
+  // getConnectionStatusUpdate(emb);
+  // denoise(emb.keyData.hall_sensor);
+  // keyboardLogic(emb);
 
 }
