@@ -9,10 +9,6 @@
 
 int latest = DEFAULT_READING;
 
-float degree(Emb emb) {
-    return 1 - DEFAULT_READING / latest;
-}
-
 class HallFilter {
 
     public:
@@ -54,8 +50,15 @@ class HallFilter {
                 previous = average;
             }
         }
+        static int getValue(Emb emb) {
+            return analogRead(emb.keyData.hall_sensor);
+        }
 
 };
+
+int degree(Emb emb) {
+    return -10 + (10 * DEFAULT_READING / (HallFilter::getValue(emb) + 0.5));
+}
 
 void denoise(int HALL_PIN) {
     HallFilter::getReading(HALL_PIN);
