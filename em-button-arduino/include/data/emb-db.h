@@ -8,9 +8,9 @@ class EmbButtonDB {
     
   public:
     String file = "/emb-db.data";
-    String dbName;
-    EmbButtonDB(String deviceName) {
-      this->dbName = deviceName;
+    String table;
+    EmbButtonDB(String table) {
+      this->table = table;
     }
 
     void begin() {
@@ -51,7 +51,7 @@ class EmbButtonDB {
 
     }
 
-    void add(EmbButton emb) {
+    void add(String route, EmbButton emb) {
       File file = SPIFFS.open(this->file, "a");
       if (!file) {
         Serial.println("Failed to open file for appending");
@@ -80,7 +80,7 @@ class EmbButtonDB {
 
     }
 
-    bool update(EmbButton emb) {
+    bool update(String route, EmbButton emb) {
       if(!remove(emb.id)) {
         return false;
       }
@@ -99,7 +99,7 @@ class EmbButtonDB {
       return true;
     }
 
-    bool remove(int id) {
+    bool remove(String route, DynamicJsonDocument queryDoc) {
       if(!SPIFFS.exists(this->file)) {
         Serial.println("File does not exist");
         return false;
@@ -124,7 +124,7 @@ class EmbButtonDB {
       uint8_t* buf = (uint8_t*) &emb;
 
       while(inFile.read(buf, size)) {
-        if(emb.id != id) {
+        if(emb.id != queryDoc["id"]) {
           outFile.write(buf, size);
         } else {
           removed = true;
@@ -145,9 +145,31 @@ class EmbButtonDB {
       return removed;
     }
 
-    void printAll() {
+    void printAll(String route, DynamicJsonDocument queryDoc) {
+
       Serial.println("Printing all data:");
       Serial.println("----------------------------");
+
+      if(queryDoc.containsKey("id")) {
+        
+        EmbButton emb;
+        size_t size = sizeof(emb);
+        uint8_t* buf = (uint8_t*) &emb;
+
+        while(inFile.read(buf, size)) {
+          if(emb.id != queryDoc["id"]) {
+            outFile.write(buf, size);
+          } else {
+            removed = true;
+          }
+        }
+
+        inFile.close();
+        outFile.close();
+
+        return;
+
+      }
 
       // Open the database file for reading
       File file = SPIFFS.open("/emb_db.txt", "r");

@@ -1,4 +1,5 @@
 #include <BleKeyboard.h>
+#include <ArduinoJson.h>
 
 #pragma once
 #include <stdexcept>
@@ -10,23 +11,12 @@ struct EmbConnectionState {
     bool serialConnected = false;
 };
 
-// struct EmbStateThresholds {
-//     const int active = 0x1, inactive = 0x0;
-// };
-
 typedef int Pin;
-// struct EmbButtonData {
-//     const Pin pin = 2;
-//     const EmbStateThresholds state;
-// };
-
 struct EmbButton {
     uint8_t id;
     uint8_t keyID = KEY_RETURN;
-    double output_resistance, activation_point = 1650;
-    // EmbButtonData buttonData;
+    double activation_point = 1650;
     const Pin electromagnet = 13, hall_sensor = 4;
-    std::function<void()> delegateFunction;
 };
 
 struct Emb {
@@ -36,3 +26,17 @@ struct Emb {
     EmbConnectionState connectionStatus;
     EmbButton keyData;
 };
+
+DynamicJsonDocument parseStruct(EmbButton emb) {
+    // Create a new JSON object with enough capacity for the EmbButton struct
+    DynamicJsonDocument doc(JSON_OBJECT_SIZE(5));
+    
+    // Add each field of the EmbButton struct to the JSON object
+    doc["id"] = emb.id;
+    doc["keyID"] = emb.keyID;
+    doc["activation_point"] = emb.activation_point;
+    doc["electromagnet"] = emb.electromagnet;
+    doc["hall_sensor"] = emb.hall_sensor;
+    
+    return doc;
+}
