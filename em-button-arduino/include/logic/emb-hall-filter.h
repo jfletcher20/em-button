@@ -1,5 +1,6 @@
 #pragma once
 #include "data/emb-data.h"
+
 #include <Arduino.h>
 
 /// @brief A class that filters the hall sensor readings
@@ -11,27 +12,14 @@ class HallFilter {
         
         static const int WINDOW_SIZE = 40;
 
-        int past = DEFAULT_VALUE;
-
         int values[WINDOW_SIZE];
         int sum = 0;
         int localInd = 0;
 
-        Emb* emb;
-
-    public:
-        HallFilter(Emb* emb) {
-            this->emb = emb;
-            // increase window size for hier accuracy
-            for (int i = 0; i < WINDOW_SIZE; i++) {
-                values[i] = DEFAULT_VALUE;
-                sum += DEFAULT_VALUE;
-            }
-        }
 
         int getReading() {
 
-            int value = analogRead(emb->keyData.hall_sensor);
+            int value = getValue();
 
             // Compute the moving average of the window
             sum -= values[localInd];
@@ -48,11 +36,27 @@ class HallFilter {
             }
 
             // The value is not noisy, print it
-            if(average > past + 10 || average < past - 10) {
-                past = average;
+            if(average > current + 10 || average < current - 10) {
+                current = average;
                 return average;
             }
             return 0;
+        }
+
+    public:
+        Emb* emb;
+
+        const int max_normalized = 10;
+        int current = DEFAULT_VALUE;
+        int normalized = 0;
+
+        HallFilter(Emb* emb) {
+            this->emb = emb;
+            // increase window size for higher accuracy
+            for (int i = 0; i < WINDOW_SIZE; i++) {
+                values[i] = DEFAULT_VALUE;
+                sum += DEFAULT_VALUE;
+            }
         }
 
         int getValue() {
@@ -60,7 +64,25 @@ class HallFilter {
         }
 
         int normalize() {
-            return -10 + (10 * past / (getValue() + 0.5));
+            int reading = denoise();
+            if(reading == 0) return -500;
+            int result = map(map(reading, 0, 4096, -10, 10), -3, 9, -max_normalized, max_normalized);
+            if(result > normalized + 2 || result < normalized - 2) {
+                normalized = result;
+                return normalized;
+            }
+            return -500;
+        }
+
+        bool hasNewReading() {
+            int result = normalize();
+            if(result < normalized || result > normalized)
+                return true;
+            return false;
+        }
+
+        bool pressed() {
+            return normalize() <= emb->keyData.activation_point * max_normalized ? true : false;
         }
 
         int denoise() {

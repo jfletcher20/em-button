@@ -15,7 +15,7 @@ typedef int Pin;
 struct EmbButton {
     uint8_t id;
     uint8_t keyID = KEY_RETURN;
-    double activation_point = 1650;
+    double activation_point = 0.5;
     Pin electromagnet = 13, hall_sensor = 4;
     int active = 1, inactive = 0;
 };

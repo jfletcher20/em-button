@@ -1,6 +1,6 @@
 #pragma once
 #include "data/emb-data.h"
-#include "communication/clientside-serial-transfer-protocol.h"
+#include "logic/emb-hall-filter.h"
 
 #define DELAY 100 // debouncing delay
 // perhaps a second delay check can be added to emulate key repeat
@@ -13,27 +13,28 @@ struct EmbKeyBlock {
   unsigned long long int timesPressed = 0; // tracks button press count for stats
 } keyBlock;
 
-void serialDataOutput(Emb emb) {
-  if(Serial.available() > 0) {
+void serialDataOutput() {
+  if (Serial.available() > 0) {
     String serialData = Serial.readString();
     serialData.trim();
     Serial.println(serialData);
-    if(serialData.equals("data")) {
+    if (serialData.equals("data")) {
       Serial.print("Times pressed: ");
       Serial.println(keyBlock.timesPressed);
       Serial.print("Activation point: ");
-      Serial.println(emb.keyData.activation_point);
+      Serial.println(filter->emb->keyData.activation_point);
       Serial.print("Current state: ");
-      Serial.print(analogRead(emb.keyData.hall_sensor));
-      Serial.println(analogRead(emb.keyData.hall_sensor) <= emb.keyData.activation_point ? " (1) " : " (0) ");
+      Serial.println(filter->getValue());
+      Serial.print(filter->normalize());
+      Serial.println(filter->pressed() ? " pressed" : " not pressed");
     }
   }
 }
 
-void keyboardLogic(Emb emb) {
+void keyboardLogic(HallFilter* filter) {
 
   // manages keylock duration (debouncing)
-  if(keyBlock.keyLock && degree(emb) < 4) {
+  if(keyBlock.keyLock && filter->normalize() < 4) {
     if(keyBlock.blockTime == 0) {
       keyBlock.blockTime = millis();
     } else {
@@ -45,11 +46,11 @@ void keyboardLogic(Emb emb) {
   }
 
   // manages keypress
-  if(emb.keyboard.isConnected() && degree(emb) > 4 && !keyBlock.keyLock) {
+  if(filter->emb->keyboard.isConnected() && filter->normalize() > 4 && !keyBlock.keyLock) {
 
-    emb.keyboard.write(emb.keyData.keyID);
+    filter->emb->keyboard.write(filter->emb->keyData.keyID);
     // test(emb);
-    Serial.println(degree(emb));
+    Serial.println(filter->normalize());
 
     keyBlock.keyLock = 1;
 
