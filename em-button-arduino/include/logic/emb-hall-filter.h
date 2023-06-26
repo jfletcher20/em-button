@@ -2,63 +2,69 @@
 #include "data/emb-data.h"
 #include <Arduino.h>
 
-#define THRESHOLD 20
-#define WINDOW_SIZE 40
-#define DEFAULT_READING 1900
-
-int latest = DEFAULT_READING;
-
+/// @brief A class that filters the hall sensor readings
 class HallFilter {
 
+    private:
+        #define THRESHOLD 20
+        #define DEFAULT_VALUE 1910
+        
+        static const int WINDOW_SIZE = 40;
+
+        int past = DEFAULT_VALUE;
+
+        int values[WINDOW_SIZE];
+        int sum = 0;
+        int localInd = 0;
+
+        Emb* emb;
+
     public:
-        static void getReading(int HALL_PIN) {
-
-            int values[WINDOW_SIZE];
-            int sum = 0;
-            int index = 0;
-
-            int previous = DEFAULT_READING + THRESHOLD / 2;
-
-            // Fill the window with initial readings
+        HallFilter(Emb* emb) {
+            this->emb = emb;
+            // increase window size for hier accuracy
             for (int i = 0; i < WINDOW_SIZE; i++) {
-                values[i] = DEFAULT_READING + i;
-                sum += values[i];
+                values[i] = DEFAULT_VALUE;
+                sum += DEFAULT_VALUE;
             }
+        }
 
-            int value = analogRead(HALL_PIN);
+        int getReading() {
+
+            int value = analogRead(emb->keyData.hall_sensor);
 
             // Compute the moving average of the window
-            sum -= values[index];
+            sum -= values[localInd];
             sum += value;
-            values[index] = value;
-            index = (index + 1) % WINDOW_SIZE;
+            values[localInd] = value;
+            localInd = (localInd + 1) % WINDOW_SIZE;
             int average = sum / WINDOW_SIZE;
 
             // Check if the difference between the value and the average is greater than the threshold
             int diff = abs(value - average);
             if (diff > THRESHOLD) {
                 // The value is noisy, skip it
-                // Serial.println(value);
-                // latest = average;
-                return; // continue
+                return 0; // continue
             }
 
             // The value is not noisy, print it
-            if(average > previous + 10 || average < previous - 10) {
-                latest = average;
-                previous = average;
+            if(average > past + 10 || average < past - 10) {
+                past = average;
+                return average;
             }
+            return 0;
         }
-        static int getValue(Emb emb) {
-            return analogRead(emb.keyData.hall_sensor);
+
+        int getValue() {
+            return analogRead(emb->keyData.hall_sensor);
+        }
+
+        int normalize() {
+            return -10 + (10 * past / (getValue() + 0.5));
+        }
+
+        int denoise() {
+            return getReading();
         }
 
 };
-
-int degree(Emb emb) {
-    return -10 + (10 * DEFAULT_READING / (HallFilter::getValue(emb) + 0.5));
-}
-
-void denoise(int HALL_PIN) {
-    HallFilter::getReading(HALL_PIN);
-}
