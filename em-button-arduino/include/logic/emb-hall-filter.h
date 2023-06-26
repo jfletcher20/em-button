@@ -1,6 +1,5 @@
-
 #pragma once
-#include "emb-data.h"
+#include "data/emb-data.h"
 #include <Arduino.h>
 
 #define THRESHOLD 20

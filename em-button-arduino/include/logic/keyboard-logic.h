@@ -1,6 +1,6 @@
 #pragma once
+#include "data/emb-data.h"
 #include <Arduino.h>
-#include "emb-data.h"
 
 bool keylock = 0; // lock the key from being pressed temporarily
 bool isConnected = 0; // check if keyboard is connected before attempting to send data
@@ -10,7 +10,7 @@ unsigned long long int timesPressed = 0; // track how many times the button is p
 void keyboardLogic(Emb emb) {
 
   // manages keylock duration
-  if(digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.inactive && keylock) {
+  if(digitalRead(emb.keyData.electromagnet) == emb.keyData.inactive && keylock) {
     if(blockTime == 0) {
       blockTime = millis();
     } else {
@@ -20,7 +20,7 @@ void keyboardLogic(Emb emb) {
   }
 
   // manages keypress
-  if(emb.keyboard.isConnected() && digitalRead(emb.keyData.buttonData.pin) == emb.keyData.buttonData.state.active && !keylock) {
+  if(emb.keyboard.isConnected() && digitalRead(emb.keyData.electromagnet) >= emb.keyData.active && !keylock) {
 
     emb.keyboard.write(emb.keyData.keyID);
     

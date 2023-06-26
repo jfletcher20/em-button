@@ -6,6 +6,10 @@
 		{
 			"name": "em-button-arduino",
 			"path": ".."
+		},
+		{
+			"name": "libs",
+			"path": "../lib"
 		}
 	],
 	"settings": {

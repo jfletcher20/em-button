@@ -4,7 +4,7 @@
 #pragma once
 #include <stdexcept>
 #include <Arduino.h>
-#include "emb-errors.h"
+#include "communication/emb-errors.h"
 
 struct EmbConnectionState {
     bool keyboardConnected = false;
@@ -16,7 +16,8 @@ struct EmbButton {
     uint8_t id;
     uint8_t keyID = KEY_RETURN;
     double activation_point = 1650;
-    const Pin electromagnet = 13, hall_sensor = 4;
+    Pin electromagnet = 13, hall_sensor = 4;
+    int active = 1, inactive = 0;
 };
 
 struct Emb {

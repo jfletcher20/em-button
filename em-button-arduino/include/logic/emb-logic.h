@@ -1,6 +1,6 @@
 #pragma once
-#include "emb-data.h"
-#include "emb-serial.h"
+#include "data/emb-data.h"
+#include "communication/clientside-serial-transfer-protocol.h"
 
 #define DELAY 100 // debouncing delay
 // perhaps a second delay check can be added to emulate key repeat

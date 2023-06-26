@@ -51,7 +51,7 @@ class EmbButtonDB {
 
     }
 
-    void add(String route, EmbButton emb) {
+    void add(EmbButton emb) {
       File file = SPIFFS.open(this->file, "a");
       if (!file) {
         Serial.println("Failed to open file for appending");
@@ -80,7 +80,7 @@ class EmbButtonDB {
 
     }
 
-    bool update(String route, EmbButton emb) {
+    bool update(EmbButton emb) {
       if(!remove(emb.id)) {
         return false;
       }
@@ -99,7 +99,7 @@ class EmbButtonDB {
       return true;
     }
 
-    bool remove(String route, DynamicJsonDocument queryDoc) {
+    bool remove(int embId) {
       if(!SPIFFS.exists(this->file)) {
         Serial.println("File does not exist");
         return false;
@@ -124,7 +124,7 @@ class EmbButtonDB {
       uint8_t* buf = (uint8_t*) &emb;
 
       while(inFile.read(buf, size)) {
-        if(emb.id != queryDoc["id"]) {
+        if(emb.id != embId) {
           outFile.write(buf, size);
         } else {
           removed = true;
@@ -145,7 +145,7 @@ class EmbButtonDB {
       return removed;
     }
 
-    void printAll(String route, DynamicJsonDocument queryDoc) {
+    void printAll(DynamicJsonDocument queryDoc) {
 
       Serial.println("Printing all data:");
       Serial.println("----------------------------");
@@ -156,11 +156,11 @@ class EmbButtonDB {
         size_t size = sizeof(emb);
         uint8_t* buf = (uint8_t*) &emb;
 
+        File inFile = SPIFFS.open(this->file, "r");
+        File outFile = SPIFFS.open("/emb-db-tmp.data", "w");
         while(inFile.read(buf, size)) {
           if(emb.id != queryDoc["id"]) {
             outFile.write(buf, size);
-          } else {
-            removed = true;
           }
         }
 

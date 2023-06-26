@@ -1,17 +1,17 @@
 #pragma once // maybe make it so that only ArduinoJson is passed on multiple times?
-#include "emb-db.h"
-#include "emb-data.h"
+#include "data/emb-db.h"
+#include "data/emb-data.h"
 
 enum class request { GET, POST, PUT, DELETE };
 
 class STP {
 
     public:
-        EmbButtonDB database;
+        EmbButtonDB* database;
 
         STP(String database_table) {
             this->database = new EmbButtonDB(database_table);
-            this->database.begin();
+            this->database->begin();
         }
 
         ~STP() {
@@ -33,30 +33,30 @@ class STP {
 
         void requestLogic(DynamicJsonDocument json) {
 
-            const char* method = json["method"];
-
-            std::string methodLower = method;
-            std::transform(methodLower.begin(), methodLower.end(), methodLower.begin(), ::toLower);
+            char* method = json["method"];
+            char check;
+            if(method == "post") check = 'c';
+            else if(method == "get") check = 'r';
+            else if(method == "put") check = 'u';
+            else if(method == "delete") check = 'd';
 
             request req;
-            switch(methodLower) {
-                case "get":
-                    req = request::GET;
-                    break;
-                case "post":
+            switch(check) {
+                case 'c':
                     req = request::POST;
                     break;
-                case "put":
+                case 'r':
+                    req = request::GET;
+                    break;
+                case 'u':
                     req = request::PUT;
                     break;
-                case "delete":
+                case 'd':
                     req = request::DELETE;
                     break;
+                default:
+                    throw std::invalid_argument("Invalid request method");
             }
-
-            String route = "/";
-            if(json.containsKey("route") && !json["route"].isNull() && json["route"].is<String>())
-                route += json["route"].as<String>();
 
             if (req == request::GET || req == request::DELETE) {
 
@@ -67,10 +67,10 @@ class STP {
 
                 switch (req) {
                     case request::GET:
-                        database.printAll(route, queryDoc);
+                        database->printAll(queryDoc);
                         break;
                     case request::DELETE:
-                        database.remove(route, queryDoc);
+                        database->remove(queryDoc["id"]);
                         break;
                 }
 
@@ -86,10 +86,10 @@ class STP {
 
                 switch (req) {
                     case request::POST:
-                        database.add(route, emb);
+                        database->add(emb);
                         break;
                     case request::PUT:
-                        database.update(route, emb);
+                        database->update(emb);
                         break;
                 }
 
