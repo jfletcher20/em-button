@@ -74,15 +74,8 @@ class HallFilter {
             return -500;
         }
 
-        bool hasNewReading() {
-            int result = normalize();
-            if(result < normalized || result > normalized)
-                return true;
-            return false;
-        }
-
         bool pressed() {
-            return normalize() <= emb->keyData.activation_point * max_normalized ? true : false;
+            return normalized <= emb->keyData.activation_point * max_normalized ? false : true;
         }
 
         int denoise() {

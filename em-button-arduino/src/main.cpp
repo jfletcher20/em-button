@@ -1,3 +1,4 @@
+#include "communication/emb-server.h"
 #include "logic/emb-hall-filter.h"
 #include "logic/emb-logic.h"
 #include "data/emb-data.h"
@@ -6,7 +7,8 @@
 #include <stdio.h>
 
 Emb emb;
-HallFilter* filter = new HallFilter(&emb);
+HallFilter filter(&emb);
+EmbServer server;
 
 void setup() {
 
@@ -25,10 +27,10 @@ void setup() {
 
 void loop() {
 
-  serialDataOutput(emb);
+  serialDataOutput(filter);
   analogWrite(emb.keyData.electromagnet, 255);
   // if filter has new reading print normalize
-  int newReading = filter->normalize();
+  int newReading = filter.normalize();
   if(newReading > -11) {
     Serial.println(newReading);
   }

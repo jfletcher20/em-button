@@ -1,0 +1,1 @@
+enum class request { GET, POST, PUT, DELETE };
