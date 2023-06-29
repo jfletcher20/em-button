@@ -15,7 +15,6 @@ class HallFilter {
         int sum = 0;
         int localInd = 0;
 
-
         int getReading() {
 
             int value = getValue();
@@ -66,6 +65,7 @@ class HallFilter {
             int reading = denoise();
             if(reading == 0) return -500;
             int result = map(map(reading, 0, 4096, -10, 10), -3, 9, -max_normalized, max_normalized);
+            if(result < 0) result *= -1;
             if(result > normalized + 2 || result < normalized - 2) {
                 normalized = result;
                 return normalized;

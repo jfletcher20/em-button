@@ -1,13 +1,10 @@
-#include "communication/emb-server.h"
-#include "logic/emb-hall-filter.h"
-#include "logic/emb-logic.h"
-#include "data/emb-data.h"
+#include "headers.h"
 #include <Arduino.h>
 #include <stdio.h>
 
 Emb emb;
 HallFilter filter(&emb);
-EmbServer server;
+// EmbServer server;
 
 void setup() {
 
@@ -31,9 +28,10 @@ void loop() {
   // if filter has new reading print normalize
   int newReading = filter.normalize();
   if(newReading > -11) {
+    Serial.print("printing: ");
     Serial.println(newReading);
   }
-  getConnectionStatusUpdate(emb);
-  keyboardLogic(filter);
+  KeyboardLogic::getConnectionStatusUpdate(emb);
+  KeyboardLogic::keyboardLogic(filter);
 
 }

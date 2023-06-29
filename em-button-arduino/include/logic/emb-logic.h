@@ -1,15 +1,7 @@
 #pragma once
 #include "data/emb-data.h"
-#include "logic/emb-hall-filter.h"
-
-#define DELAY 100 // debouncing delay
-
-struct EmbKeyBlock {
-  bool keyLock = 0; // lock the key from being pressed temporarily
-  bool isConnected = 0; // check if keyboard is connected before attempting to send data
-  unsigned long blockTime = 0; // measures time
-  unsigned long long int timesPressed = 0; // tracks button press count for stats
-} keyBlock;
+#include "keyboard-logic.h"
+#include "emb-hall-filter.h"
 
 void serialDataOutput(HallFilter filter) {
   if (Serial.available() > 0) {
@@ -27,43 +19,4 @@ void serialDataOutput(HallFilter filter) {
       Serial.println(filter.pressed() ? " pressed" : " not pressed");
     }
   }
-}
-
-void keyboardLogic(HallFilter filter) {
-
-  // manages keylock duration (debouncing)
-  if(keyBlock.keyLock && filter.normalize() < 4) {
-    if(keyBlock.blockTime == 0) {
-      keyBlock.blockTime = millis();
-    } else {
-      if(millis() - keyBlock.blockTime >= DELAY)  {
-        keyBlock.keyLock = keyBlock.blockTime = 0;
-        keyBlock.timesPressed++;
-      }
-    }
-  }
-
-  // manages keypress
-  if(filter.emb->keyboard.isConnected() && filter.normalize() > 4 && !keyBlock.keyLock) {
-
-    filter.emb->keyboard.write(filter.emb->keyData.keyID);
-    // test(emb);
-    Serial.println(filter.normalize());
-
-    keyBlock.keyLock = 1;
-
-  }
-
-}
-
-void getConnectionStatusUpdate(Emb& emb) {
-
-  // part to act as keyboard for registering keypresses on the computer
-  if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
-    Serial.println(String(emb.name) + ": Keyboard connected!");
-    emb.connectionStatus.keyboardConnected = 1;
-  } if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
-    Serial.println(String(emb.name) + ": Keyboard disconnected! Searching for connections...");
-  }
-
 }

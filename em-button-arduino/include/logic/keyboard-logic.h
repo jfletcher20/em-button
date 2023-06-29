@@ -1,35 +1,65 @@
 #pragma once
+#include "emb-hall-filter.h"
 #include "data/emb-data.h"
 #include <Arduino.h>
 
-bool keylock = 0; // lock the key from being pressed temporarily
-bool isConnected = 0; // check if keyboard is connected before attempting to send data
-unsigned long blockTime = 0; // debouncing time
-unsigned long long int timesPressed = 0; // track how many times the button is pressed for stats
+#define DELAY 100 // debouncing delay
 
-void keyboardLogic(Emb emb) {
+struct EmbKeyBlock {
+  bool keyLock = 0; // lock the key from being pressed temporarily
+  bool isConnected = 0; // check if keyboard is connected before attempting to send data
+  unsigned long blockTime = 0; // measures time
+  unsigned long long int timesPressed = 0; // tracks button press count for stats
+} keyBlock;
 
-  // manages keylock duration
-  if(digitalRead(emb.keyData.electromagnet) == emb.keyData.inactive && keylock) {
-    if(blockTime == 0) {
-      blockTime = millis();
-    } else {
-      if(millis() - blockTime >= 100)
-        keylock = blockTime = 0;
+class KeyboardLogic {
+
+  public:
+    static void keyboardLogic(HallFilter filter) {
+
+      int reading = filter.normalize();
+      int activation_point = filter.max_normalized * filter.emb->keyData.activation_point;
+      bool isPressed = filter.normalized >= activation_point;
+
+      // manages keylock duration (debouncing)
+      if(keyBlock.keyLock && isPressed) {
+
+        if(keyBlock.blockTime == 0) {
+          keyBlock.blockTime = millis();
+        } else {
+          if(millis() - keyBlock.blockTime >= DELAY)  {
+            keyBlock.keyLock = keyBlock.blockTime = 0;
+            keyBlock.timesPressed++;
+          }
+        }
+      }
+
+      // manages keypress
+      if(filter.emb->keyboard.isConnected() && isPressed && !keyBlock.keyLock) {
+
+        filter.emb->keyboard.write(filter.emb->keyData.keyID);
+        // test(emb);
+        Serial.print("made it here: ");
+        Serial.print(activation_point);
+
+        Serial.println(filter.normalize());
+
+        keyBlock.keyLock = 1;
+
+      }
+
     }
-  }
 
-  // manages keypress
-  if(emb.keyboard.isConnected() && digitalRead(emb.keyData.electromagnet) >= emb.keyData.active && !keylock) {
+    static void getConnectionStatusUpdate(Emb& emb) {
 
-    emb.keyboard.write(emb.keyData.keyID);
-    
-    Serial.print("Keypress detected. ");
-    // Serial.println(++timesPressed);
-    ++timesPressed;
+      // part to act as keyboard for registering keypresses on the computer
+      if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
+        Serial.println(String(emb.name) + ": Keyboard connected!");
+        emb.connectionStatus.keyboardConnected = 1;
+      } if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
+        Serial.println(String(emb.name) + ": Keyboard disconnected! Searching for connections...");
+      }
 
-    keylock = 1;
+    }
 
-  }
-
-}
+};

@@ -5,7 +5,7 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
-STP stp("testing");
+// STP stp("testing");
 
 class EmbServer {
     public:
@@ -69,7 +69,8 @@ class EmbServer {
         }
 
         static void dbRoute(DynamicJsonDocument json) {
-            stp.requestLogic(method(json), json);
+            // stp.requestLogic(method(json), json);
+            Serial.println("db route");
         }
 
 };
