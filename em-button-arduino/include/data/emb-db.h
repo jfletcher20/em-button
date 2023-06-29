@@ -1,5 +1,6 @@
 #pragma once
 #include "emb-data.h"
+#include <ArduinoJson.h>
 #include <SPIFFS.h>
 
 class EmbButtonDB {

@@ -1,14 +1,13 @@
-#include <BleKeyboard.h>
-#include <ArduinoJson.h>
-
 #pragma once
+#include <BleKeyboard.h>
 #include <stdexcept>
 #include <Arduino.h>
 #include "communication/emb-errors.h"
 
 struct EmbConnectionState {
     bool keyboardConnected = false;
-    bool serialConnected = false;
+    bool callibrating = false;
+    bool disabled = false;
 };
 
 typedef int Pin;
@@ -28,6 +27,7 @@ struct Emb {
     EmbButton keyData;
 };
 
+/*
 DynamicJsonDocument parseStruct(EmbButton emb) {
     // Create a new JSON object with enough capacity for the EmbButton struct
     DynamicJsonDocument doc(JSON_OBJECT_SIZE(5));
@@ -41,3 +41,4 @@ DynamicJsonDocument parseStruct(EmbButton emb) {
     
     return doc;
 }
+*/

@@ -1,7 +1,6 @@
 #pragma once
 #include "clientside-serial-transfer-protocol.h"
 #include "logic/emb-logic.h"
-#include "request-types.h"
 #include "routes.h"
 #include <ArduinoJson.h>
 #include <Arduino.h>
@@ -10,27 +9,27 @@ STP stp("testing");
 
 class EmbServer {
     public:
-        static request method(DynamicJsonDocument json) {
-            char* method = json["method"];
+        static STPMethod method(DynamicJsonDocument json) {
+            String method = json["method"];
             char check;
             if(method == "post") check = 'c';
             else if(method == "get") check = 'r';
             else if(method == "put") check = 'u';
             else if(method == "delete") check = 'd';
 
-            request req;
+            STPMethod req;
             switch(check) {
                 case 'c':
-                    req = request::POST;
+                    req = STPMethod::POST;
                     break;
                 case 'r':
-                    req = request::GET;
+                    req = STPMethod::GET;
                     break;
                 case 'u':
-                    req = request::PUT;
+                    req = STPMethod::PUT;
                     break;
                 case 'd':
-                    req = request::DELETE;
+                    req = STPMethod::DELETE;
                     break;
                 default:
                     throw std::invalid_argument("Invalid request method");
@@ -51,18 +50,18 @@ class EmbServer {
             }
         }
 
-        static void handleRequest(char* route, DynamicJsonDocument json) {
-            if (strcmp(route, routes[0]) == 0) {
+        static void handleRequest(String route, DynamicJsonDocument json) {
+            if (String(route) == String(routes[0])) {
                 rootRoute(json);
-            } else if (strcmp(route, routes[1]) == 0) {
+            } else if (String(route) == String(routes[1])) {
                 // Handle /db/ route
-            } else if (strcmp(route, routes[2]) == 0) {
+            } else if (String(route) == String(routes[2])) {
                 // Handle /device/callibrate/ route
             }
         }
 
         static void rootRoute(DynamicJsonDocument json) {
-            request req = method(json);
+            STPMethod req = method(json);
             switch(req) {
                 default:
                     throw std::invalid_argument("400 Bad request");

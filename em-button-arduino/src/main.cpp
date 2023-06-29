@@ -2,7 +2,6 @@
 #include "logic/emb-hall-filter.h"
 #include "logic/emb-logic.h"
 #include "data/emb-data.h"
-
 #include <Arduino.h>
 #include <stdio.h>
 

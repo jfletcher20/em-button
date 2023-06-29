@@ -1,1 +1,1 @@
-enum class request { GET, POST, PUT, DELETE };
+//enum class STPMethod { GET, POST, PUT, DELETE };

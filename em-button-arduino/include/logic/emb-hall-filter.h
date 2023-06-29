@@ -1,6 +1,5 @@
 #pragma once
 #include "data/emb-data.h"
-
 #include <Arduino.h>
 
 /// @brief A class that filters the hall sensor readings

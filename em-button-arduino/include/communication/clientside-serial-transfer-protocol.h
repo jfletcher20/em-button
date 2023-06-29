@@ -1,29 +1,31 @@
 #pragma once // maybe make it so that only ArduinoJson is passed on multiple times?
 #include "data/emb-db.h"
 #include "data/emb-data.h"
-#include "request-types.h"
+#include <ArduinoJson.h>
+
+enum class STPMethod { GET, POST, PUT, DELETE };
 
 class STP {
 
     private:
-        void getOrDelete(request req, DynamicJsonDocument json) {
+        void getOrDelete(STPMethod req, DynamicJsonDocument json) {
             switch (req) {
-                case request::GET:
+                case STPMethod::GET:
                     database->printAll(json);
                     break;
-                case request::DELETE:
+                case STPMethod::DELETE:
                     database->remove(json["id"]);
                     break;
             }
         }
 
-        void postOrPut(request req, DynamicJsonDocument json) {
+        void postOrPut(STPMethod req, DynamicJsonDocument json) {
             EmbButton emb = embFromJson(json);
             switch (req) {
-                case request::POST:
+                case STPMethod::POST:
                     database->add(emb);
                     break;
-                case request::PUT:
+                case STPMethod::PUT:
                     database->update(emb);
                     break;
             }
@@ -51,8 +53,8 @@ class STP {
             delete this->database;
         }
 
-        void requestLogic(request req, DynamicJsonDocument json) {
-            if (req == request::GET || req == request::DELETE) {
+        void requestLogic(STPMethod req, DynamicJsonDocument json) {
+            if (req == STPMethod::GET || req == STPMethod::DELETE) {
                 getOrDelete(req, json);
             } else {
                 postOrPut(req, json);
