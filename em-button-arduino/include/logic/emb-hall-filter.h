@@ -7,7 +7,7 @@ class HallFilter {
 
     private:
         #define THRESHOLD 20
-        #define DEFAULT_VALUE 1910
+        int DEFAULT_VALUE = 1910;
         
         static const int WINDOW_SIZE = 40;
 
@@ -51,21 +51,35 @@ class HallFilter {
         HallFilter(Emb* emb) {
             this->emb = emb;
             // increase window size for higher accuracy
+            current = DEFAULT_VALUE = analogRead(emb->keyData.hall_sensor);
             for (int i = 0; i < WINDOW_SIZE; i++) {
                 values[i] = DEFAULT_VALUE;
                 sum += DEFAULT_VALUE;
             }
         }
 
+        void calibrate() {
+            current = DEFAULT_VALUE = analogRead(emb->keyData.hall_sensor);
+            for (int i = 0; i < WINDOW_SIZE; i++) {
+                values[i] = DEFAULT_VALUE;
+                sum += DEFAULT_VALUE;
+            }
+            denoise();
+        }
+
         int getValue() {
             return analogRead(emb->keyData.hall_sensor);
+        }
+
+        int getDisplayValue() {
+            return current;
         }
 
         int normalize() {
             int reading = denoise();
             if(reading == 0) return -500;
-            int result = map(map(reading, 0, 4096, -10, 10), -3, 9, -max_normalized, max_normalized);
-            if(result < 0) result *= -1;
+            int result = map(reading, DEFAULT_VALUE, 4096, 0, max_normalized);
+            // if(result < 0) result *= -1;
             if(result > normalized + 2 || result < normalized - 2) {
                 normalized = result;
                 return normalized;

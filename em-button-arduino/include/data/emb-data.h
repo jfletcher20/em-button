@@ -6,7 +6,7 @@
 
 struct EmbConnectionState {
     bool keyboardConnected = false;
-    bool callibrating = false;
+    bool calibrating = false;
     bool disabled = false;
 };
 
@@ -22,6 +22,7 @@ struct EmbButton {
 struct Emb {
     const char name[20] = "ESP32 Emb Keyboard";
     const char manufacturer[20] = "IoT Lab, FOI";
+    const char version[10] = "v0.1.4";
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;

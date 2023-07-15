@@ -1,4 +1,5 @@
 #include "communication/emb-server.h"
+#include "communication/display.h"
 #include "logic/emb-hall-filter.h"
 #include "logic/keyboard-logic.h"
 #include "logic/emb-logic.h"

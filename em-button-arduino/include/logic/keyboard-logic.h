@@ -1,9 +1,11 @@
 #pragma once
 #include "emb-hall-filter.h"
 #include "data/emb-data.h"
+#include "emb-logic.h"
 #include <Arduino.h>
 
 #define DELAY 100 // debouncing delay
+void refreshDisplayData(DisplayManager displayManager);
 
 struct EmbKeyBlock {
   bool keyLock = 0; // lock the key from being pressed temporarily
@@ -12,10 +14,11 @@ struct EmbKeyBlock {
   unsigned long long int timesPressed = 0; // tracks button press count for stats
 } keyBlock;
 
+
 class KeyboardLogic {
 
   public:
-    static void keyboardLogic(HallFilter filter) {
+    static void keyboardLogic(HallFilter& filter) {
 
       int reading = filter.normalize();
       int activation_point = filter.max_normalized * filter.emb->keyData.activation_point;
@@ -35,29 +38,30 @@ class KeyboardLogic {
       }
 
       // manages keypress
-      if(filter.emb->keyboard.isConnected() && isPressed && !keyBlock.keyLock) {
+      if(filter.emb->connectionStatus.keyboardConnected && isPressed && !keyBlock.keyLock) {
 
+        filter.emb->keyboard.clearWriteError();
+        filter.emb->keyboard.releaseAll();
         filter.emb->keyboard.write(filter.emb->keyData.keyID);
-        // test(emb);
-        Serial.print("made it here: ");
-        Serial.print(activation_point);
 
-        Serial.println(filter.normalize());
-
+        Serial.println("Flushed");
         keyBlock.keyLock = 1;
 
       }
 
     }
 
-    static void getConnectionStatusUpdate(Emb& emb) {
+    static void getConnectionStatusUpdate(Emb& emb, DisplayManager displayManager) {
 
       // part to act as keyboard for registering keypresses on the computer
       if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
         Serial.println(String(emb.name) + ": Keyboard connected!");
         emb.connectionStatus.keyboardConnected = 1;
+        refreshDisplayData(displayManager);
       } if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
+        emb.connectionStatus.keyboardConnected = 0;
         Serial.println(String(emb.name) + ": Keyboard disconnected! Searching for connections...");
+        refreshDisplayData(displayManager);
       }
 
     }

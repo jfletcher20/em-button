@@ -56,7 +56,7 @@ class EmbServer {
             } else if (String(route) == String(routes[1])) {
                 // Handle /db/ route
             } else if (String(route) == String(routes[2])) {
-                // Handle /device/callibrate/ route
+                // Handle /device/calibrate/ route
             }
         }
 
