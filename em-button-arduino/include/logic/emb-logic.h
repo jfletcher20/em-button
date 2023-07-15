@@ -25,12 +25,5 @@ void serialDataOutput(DisplayManager displayManager, HallFilter* filter, bool* e
 
 void refreshDisplayData(DisplayManager displayManager) {
   displayManager.drawScene();
-  Serial.print("Times pressed: ");
-  Serial.println(keyBlock.timesPressed);
-  Serial.print("Activation point: ");
-  Serial.println(displayManager.filter->emb->keyData.activation_point);
-  Serial.print("Current state: ");
-  Serial.println(displayManager.filter->getValue());
-  Serial.print(displayManager.filter->normalize());
-  Serial.println(displayManager.filter->pressed() ? " pressed" : " not pressed");
+  Serial.println(displayManager.getJson().c_str());
 }

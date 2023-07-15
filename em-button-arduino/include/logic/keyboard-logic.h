@@ -44,7 +44,7 @@ class KeyboardLogic {
         filter.emb->keyboard.releaseAll();
         filter.emb->keyboard.write(filter.emb->keyData.keyID);
 
-        Serial.println("Flushed");
+        Serial.println("✓");
         keyBlock.keyLock = 1;
 
       }

@@ -1,1 +1,1 @@
-const String routes[] = {"/", "/db/", "/device/calibrate/"};
+const String routes[] = {"/", "/db/", "/device/calibrate/", "/device/enable/", "/device/disable/", "/device/data"};

@@ -1,5 +1,6 @@
 #pragma once
 #include "data/emb-data.h"
+#include "esp_system.h"
 #include <Arduino.h>
 
 /// @brief A class that filters the hall sensor readings
@@ -51,7 +52,7 @@ class HallFilter {
         HallFilter(Emb* emb) {
             this->emb = emb;
             // increase window size for higher accuracy
-            current = DEFAULT_VALUE = analogRead(emb->keyData.hall_sensor);
+            current = DEFAULT_VALUE = getValue();
             for (int i = 0; i < WINDOW_SIZE; i++) {
                 values[i] = DEFAULT_VALUE;
                 sum += DEFAULT_VALUE;
@@ -59,12 +60,15 @@ class HallFilter {
         }
 
         void calibrate() {
-            current = DEFAULT_VALUE = analogRead(emb->keyData.hall_sensor);
-            for (int i = 0; i < WINDOW_SIZE; i++) {
-                values[i] = DEFAULT_VALUE;
-                sum += DEFAULT_VALUE;
-            }
-            denoise();
+            // doing all of this doesn't properly calibrate the device for some reason
+            // DEFAULT_VALUE = getValue();
+            // current = DEFAULT_VALUE;
+            // normalized = localInd = sum = 0;
+            // for (int i = 0; i < WINDOW_SIZE; i++) {
+            //     values[i] = DEFAULT_VALUE;
+            //     sum += DEFAULT_VALUE;
+            // }
+            ESP.restart();
         }
 
         int getValue() {

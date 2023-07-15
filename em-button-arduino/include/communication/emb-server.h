@@ -1,7 +1,11 @@
 #pragma once
+
 #include "clientside-serial-transfer-protocol.h"
+#include "logic/emb-hall-filter.h"
+#include "logic/keyboard-logic.h"
 #include "logic/emb-logic.h"
 #include "routes.h"
+
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
@@ -9,7 +13,16 @@
 
 class EmbServer {
     public:
-        static STPMethod method(DynamicJsonDocument json) {
+        HallFilter* filter;
+        DisplayManager* displayManager;
+        bool* enableDevice;
+        EmbServer(HallFilter* filter, DisplayManager* displayManager, bool* enableDevice) {
+            this->filter = filter;
+            this->displayManager = displayManager;
+            this->enableDevice = enableDevice;
+        }
+
+        STPMethod method(DynamicJsonDocument json) {
             String method = json["method"];
             char check;
             if(method == "post") check = 'c';
@@ -37,7 +50,7 @@ class EmbServer {
             return req;
         }
 
-        static void serialLogic() {
+        void serialLogic() {
             if (Serial.available() > 0) {
                 String c = Serial.readString();
                 c.trim();
@@ -50,17 +63,31 @@ class EmbServer {
             }
         }
 
-        static void handleRequest(String route, DynamicJsonDocument json) {
+        void handleRequest(String route, DynamicJsonDocument json) {
             if (String(route) == String(routes[0])) {
                 rootRoute(json);
             } else if (String(route) == String(routes[1])) {
                 // Handle /db/ route
             } else if (String(route) == String(routes[2])) {
                 // Handle /device/calibrate/ route
+                filter->calibrate();
+            } else if (String(route) == String(routes[3])) {
+                // Handle /device/enable/ route
+                *enableDevice = true;
+            } else if (String(route) == String(routes[4])) {
+                // Handle /device/disable/ route
+                *enableDevice = false;
+            } else if (String(route) == String(routes[4])) {
+                // Handle /device/data/ route
+                // send arduinojson data via serial monitor
+                Serial.println(displayManager->getJson().c_str());
+            } else {
+                throw std::invalid_argument("404 Not found");
             }
+            displayManager->drawScene();
         }
 
-        static void rootRoute(DynamicJsonDocument json) {
+        void rootRoute(DynamicJsonDocument json) {
             STPMethod req = method(json);
             switch(req) {
                 default:
@@ -68,7 +95,7 @@ class EmbServer {
             }
         }
 
-        static void dbRoute(DynamicJsonDocument json) {
+        void dbRoute(DynamicJsonDocument json) {
             // stp.requestLogic(method(json), json);
             Serial.println("db route");
         }

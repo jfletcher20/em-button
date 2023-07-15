@@ -1,9 +1,10 @@
 #pragma once
 #include "logic/emb-hall-filter.h"
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+#include <ArduinoJson.h>
 #include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -75,4 +76,18 @@ class DisplayManager {
             copyright();
             display.display();
         }
+        std::string getJson() {
+            DynamicJsonDocument doc(1024);
+            doc["current_value"] = filter->getDisplayValue();
+            doc["value_normalized"] = filter->normalized;
+            doc["times_pressed"] = *timesPressed;
+            doc["activation_point"] = filter->emb->keyData.activation_point;
+            doc["button_pressed"] = filter->pressed();
+            doc["device_enabled"] = *enableDevice;
+            doc["ble_connected"] = filter->emb->connectionStatus.keyboardConnected;
+            String json;
+            serializeJson(doc, json);
+            return json.c_str();
+        }
+
 };

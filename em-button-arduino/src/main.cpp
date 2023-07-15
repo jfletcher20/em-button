@@ -8,6 +8,8 @@ Emb emb;
 HallFilter filter(&emb);
 DisplayManager displayManager(&filter, &enableDevice, &keyBlock.timesPressed);
 
+EmbServer embServer(&filter, &displayManager, &enableDevice);
+
 void setup() {
 
   pinMode(0, INPUT_PULLDOWN);
@@ -43,8 +45,8 @@ void loop() {
     // if filter has new reading print normalize
     int newReading = filter.normalize();
     if(newReading > -11) {
-      Serial.print("printing: ");
-      Serial.println(newReading);
+      // Serial.print("printing: ");
+      // Serial.println(newReading);
       refreshDisplayData(displayManager);
     }
     KeyboardLogic::getConnectionStatusUpdate(emb, displayManager);
