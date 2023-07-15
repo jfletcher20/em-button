@@ -35,11 +35,12 @@ bool pressed = false;
 unsigned long timePressed = 0;
 void userButtonLogic();
 
+int counter = 0;
 void loop() {
 
-  serialDataOutput(displayManager, &filter, &enableDevice);
-  userButtonLogic();
+  embServer.serialLogic();
 
+  userButtonLogic(); // user button should always be available regardless of whether 
   if(enableDevice) {
     analogWrite(emb.keyData.electromagnet, 255);
     // if filter has new reading print normalize
@@ -47,18 +48,25 @@ void loop() {
     if(newReading > -11) {
       // Serial.print("printing: ");
       // Serial.println(newReading);
-      refreshDisplayData(displayManager);
+      embServer.refreshDisplayData();
     }
-    KeyboardLogic::getConnectionStatusUpdate(emb, displayManager);
-    KeyboardLogic::keyboardLogic(filter);
+    KeyboardLogic::getConnectionStatusUpdate(emb);
+    if(KeyboardLogic::keyboardLogic(filter)) {
+      counter++;
+      if(counter > 15) { // if it refreshes too often, it causes lag
+        counter = 0;
+        displayManager.drawScene();
+      }
+    }
   }
 
 }
 
+
 void userButtonLogic() {
   if(digitalRead(0) == HIGH && !pressed && millis() - timePressed > 100) {
     Serial.println("\nUser button pressed. Refreshing data...");
-    refreshDisplayData(displayManager);
+    embServer.refreshDisplayData();
     pressed = true;
     timePressed = millis();
   } else if(digitalRead(0) == LOW && pressed && millis() - timePressed > 100) {

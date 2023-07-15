@@ -5,7 +5,6 @@
 #include <Arduino.h>
 
 #define DELAY 100 // debouncing delay
-void refreshDisplayData(DisplayManager displayManager);
 
 struct EmbKeyBlock {
   bool keyLock = 0; // lock the key from being pressed temporarily
@@ -14,11 +13,12 @@ struct EmbKeyBlock {
   unsigned long long int timesPressed = 0; // tracks button press count for stats
 } keyBlock;
 
-
 class KeyboardLogic {
 
   public:
-    static void keyboardLogic(HallFilter& filter) {
+    static bool keyboardLogic(HallFilter& filter) {
+
+      bool timesPressedIncreased = false;
 
       int reading = filter.normalize();
       int activation_point = filter.max_normalized * filter.emb->keyData.activation_point;
@@ -33,6 +33,7 @@ class KeyboardLogic {
           if(millis() - keyBlock.blockTime >= DELAY)  {
             keyBlock.keyLock = keyBlock.blockTime = 0;
             keyBlock.timesPressed++;
+            timesPressedIncreased = true;
           }
         }
       }
@@ -49,21 +50,23 @@ class KeyboardLogic {
 
       }
 
+      return timesPressedIncreased;
+
     }
 
-    static void getConnectionStatusUpdate(Emb& emb, DisplayManager displayManager) {
-
+    static bool getConnectionStatusUpdate(Emb& emb) {
+      bool registeredChange = false;
       // part to act as keyboard for registering keypresses on the computer
       if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
         Serial.println(String(emb.name) + ": Keyboard connected!");
         emb.connectionStatus.keyboardConnected = 1;
-        refreshDisplayData(displayManager);
+        registeredChange = true;
       } if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
-        emb.connectionStatus.keyboardConnected = 0;
         Serial.println(String(emb.name) + ": Keyboard disconnected! Searching for connections...");
-        refreshDisplayData(displayManager);
+        emb.connectionStatus.keyboardConnected = 0;
+        registeredChange = true;
       }
-
+      return registeredChange;
     }
 
 };

@@ -95,7 +95,8 @@
 			"memory_resource": "cpp",
 			"string_view": "cpp",
 			"cinttypes": "cpp",
-			"*.rh": "cpp"
+			"*.rh": "cpp",
+			"iostream": "cpp"
 		}
 	}
 }

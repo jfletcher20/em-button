@@ -5,7 +5,7 @@
 
 enum class STPMethod { GET, POST, PUT, DELETE };
 
-class STP {
+class STPDBCommunication {
 
     private:
         void getOrDelete(STPMethod req, DynamicJsonDocument json) {
@@ -44,12 +44,12 @@ class STP {
     public:
         EmbButtonDB* database;
 
-        STP(String database_table) {
+        STPDBCommunication(String database_table) {
             this->database = new EmbButtonDB(database_table);
             this->database->begin();
         }
 
-        ~STP() {
+        ~STPDBCommunication() {
             delete this->database;
         }
 
