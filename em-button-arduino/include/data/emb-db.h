@@ -146,50 +146,41 @@ class EmbButtonDB {
       return removed;
     }
 
-    void printAll(DynamicJsonDocument queryDoc) {
-
-      Serial.println("Printing all data:");
-      Serial.println("----------------------------");
-
-      if(queryDoc.containsKey("id")) {
-        
-        EmbButton emb;
-        size_t size = sizeof(emb);
-        uint8_t* buf = (uint8_t*) &emb;
-
-        File inFile = SPIFFS.open(this->file, "r");
-        File outFile = SPIFFS.open("/emb-db-tmp.data", "w");
-        while(inFile.read(buf, size)) {
-          if(emb.id != queryDoc["id"]) {
-            outFile.write(buf, size);
-          }
-        }
-
-        inFile.close();
-        outFile.close();
-
+    void printAll() {
+      if(!SPIFFS.exists(this->file)) {
+        Serial.println("File does not exist");
         return;
-
       }
 
-      // Open the database file for reading
-      File file = SPIFFS.open("/emb_db.txt", "r");
-      if (!file) {
+      File file = SPIFFS.open(this->file, "r");
+      if(!file) {
         Serial.println("Failed to open file for reading");
         return;
       }
 
-      // Read the file line by line and print the data
-      String line;
-      while (file.available()) {
-        line = file.readStringUntil('\n');
-        Serial.println(line);
+      EmbButton emb;
+      size_t size = sizeof(emb);
+      uint8_t* buf = (uint8_t*) &emb;
+
+      while(file.read(buf, size)) {
+        Serial.print("ID: ");
+        Serial.println(emb.id);
+        Serial.print("Actions: ");
+        for(int i = 0; i < 3; i++) {
+          if(emb.actions[i].actionId != -1) {
+            Serial.print("\t");
+            Serial.print(i);
+            Serial.print(". ID: ");
+            Serial.print(emb.actions[i].actionId);
+            Serial.print(", key: ");
+            Serial.print(emb.actions[i].keyId);
+            Serial.print(" activates at ");
+            Serial.print(emb.actions[i].activation_point);
+          }
+        }
       }
 
-      // Close the file
       file.close();
-
-      Serial.println("----------------------------");
     }
 
 };

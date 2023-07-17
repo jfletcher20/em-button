@@ -11,7 +11,7 @@ class STPDBCommunication {
         void getOrDelete(STPMethod req, DynamicJsonDocument json) {
             switch (req) {
                 case STPMethod::GET:
-                    database->printAll(json);
+                    database->printAll();
                     break;
                 case STPMethod::DELETE:
                     database->remove(json["id"]);

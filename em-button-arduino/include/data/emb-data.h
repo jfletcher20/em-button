@@ -11,7 +11,7 @@ struct EmbConnectionState {
 };
 
 struct EmbAction {
-    uint8_t actionId;
+    int8_t actionId;
     uint8_t keyId = KEY_RETURN;
     double activation_point = 0.5;
 };
@@ -30,9 +30,9 @@ EmbAction* embActions(int id[3], int keyId[3], double activation_point[3]) {
 
 typedef int Pin;
 struct EmbButton {
-    uint8_t id;
+    uint8_t id = 0;
     Pin electromagnet = 13, hall_sensor = 4;
-    EmbAction* actions = embActions(new int[3]{0, 1, 2}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.8});
+    EmbAction* actions = embActions(new int[3]{0, -1, -1}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.8});
 };
 
 struct Emb {
