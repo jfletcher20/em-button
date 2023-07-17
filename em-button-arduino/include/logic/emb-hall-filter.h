@@ -82,9 +82,12 @@ class HallFilter {
         int normalize() {
             int reading = denoise();
             if(reading == 0) return -500;
-            int result = map(reading, DEFAULT_VALUE, 4096, 0, max_normalized);
+            // int result = map(reading, DEFAULT_VALUE, 4096, 0, max_normalized); // map function sucks
+            int result = (reading - DEFAULT_VALUE) * max_normalized / (4096 - DEFAULT_VALUE);
+
+            // minimum result is 1000
             // if(result < 0) result *= -1;
-            if(result > normalized + 2 || result < normalized - 2) {
+            if(result > normalized + 1 || result < normalized - 1) {
                 normalized = result;
                 return normalized;
             }
