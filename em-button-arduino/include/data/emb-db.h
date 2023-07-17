@@ -63,7 +63,7 @@ class EmbButtonDB {
         int newID = 1;
         while (exists(newID))
           newID++;
-        emb.keyID = newID;
+        emb.id = newID;
       }
 
       // Check if the ID is already in the database

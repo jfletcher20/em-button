@@ -28,7 +28,7 @@ typedef int Pin;
 
 struct EmbButton {
     uint8_t id = 0;
-    uint8_t keyID = ' ';
+    uint8_t keyId = ' ';
     double output_resistance, activation_point = 1650;
     // EmbButtonData buttonData;
     Pin electromagnet = 13, hall_sensor = 4;
@@ -118,7 +118,7 @@ void input() {
 	
 	struc.id = counter;
 	
-	cout << "\t KEY:               >> "; inputAttr(struc.keyID);
+	cout << "\t KEY:               >> "; inputAttr(struc.keyId);
 	cout << "\t EM-PIN:            >> "; inputAttr(struc.electromagnet);
 	cout << "\t HALL-PIN:          >> "; inputAttr(struc.hall_sensor);
 	cout << "\t DELEGATE:          >> *not taking inputs"; cout << endl; //inputAttr(struc.delegateFunctiondelegate);
@@ -164,7 +164,7 @@ void output() {
 		else
 			cout << "    <-----------------------------[" << (int) struc.id << "]----------------------------->" << endl << endl;
 		
-		cout << "\t KEY:               << " << struc.keyID << endl;
+		cout << "\t KEY:               << " << struc.keyId << endl;
 		cout << "\t EM-PIN:            << " << struc.electromagnet << endl;
 		cout << "\t HALL-PIN:          << " << struc.hall_sensor << endl;
 		cout << "\t DELEGATE:          << *not defined for now" << endl; //<< struc.delegateFunctiondelegate << endl;
@@ -206,7 +206,7 @@ EmbButton search(int criteria) {
 			else
 				cout << "    <-----------------------------[" << (int) struc.id << "]----------------------------->" << endl << endl;
 		
-			cout << "\t KEY:               << " << struc.keyID << endl;
+			cout << "\t KEY:               << " << struc.keyId << endl;
 			cout << "\t EM-PIN:            << " << struc.electromagnet << endl;
 			cout << "\t HALL-PIN:          << " << struc.hall_sensor << endl;
 			cout << "\t DELEGATE:          << *not defined for now" << endl; // struc.delegateFunctiondelegate << endl;
@@ -307,7 +307,7 @@ bool update() {
 
 	re.id = id;
     cout << "\t KEY:               >> ";
-    inputAttr(re.keyID);
+    inputAttr(re.keyId);
     cout << "\t EM-PIN:            >> ";
     inputAttr(re.electromagnet);
     cout << "\t HALL-PIN:          >> ";

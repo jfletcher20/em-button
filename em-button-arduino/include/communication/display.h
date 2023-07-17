@@ -38,7 +38,7 @@ class DisplayManager {
             display.print("Pressed (x");
             display.print(*timesPressed);
             display.print("): ");
-            display.println(filter->pressed() ? "true" : "false");
+            display.println(filter->pressed());
         }
         bool enabledStatus() {
             display.print("Device is on: ");
@@ -81,7 +81,14 @@ class DisplayManager {
             doc["current_value"] = filter->getDisplayValue();
             doc["value_normalized"] = filter->normalized;
             doc["times_pressed"] = *timesPressed;
-            doc["activation_point"] = filter->emb->keyData.activation_point;
+            // add the actions in a list
+            JsonArray actions = doc.createNestedArray("actions");
+            for(int i = 0; i < 3 && filter->emb->keyData.actions[i].actionId != -1; i++) {
+                JsonObject action = actions.createNestedObject();
+                action["id"] = filter->emb->keyData.actions[i].actionId;
+                action["keyId"] = filter->emb->keyData.actions[i].keyId;
+                action["activation_point"] = filter->emb->keyData.actions[i].activation_point;
+            }
             doc["button_pressed"] = filter->pressed();
             doc["device_enabled"] = *enableDevice;
             doc["ble_connected"] = filter->emb->connectionStatus.keyboardConnected;

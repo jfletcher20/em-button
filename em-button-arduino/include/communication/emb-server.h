@@ -10,7 +10,7 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
-// STPDBCommunication stp("testing");
+STPDBCommunication stp("testing");
 
 class EmbServer {
     private:

@@ -34,10 +34,21 @@ class STPDBCommunication {
         EmbButton embFromJson(DynamicJsonDocument json) {
             EmbButton emb;
             emb.id = json["id"] | 0;
-            emb.keyID = json["keyID"] | KEY_RETURN;
-            emb.activation_point = json["activation_point"] | 1650;
             emb.electromagnet = json["electromagnet"] | 13;
             emb.hall_sensor = json["hall_sensor"] | 4;
+            
+            int id[3];
+            int keyId[3];
+            double activation_point[3];
+
+            JsonArray actions = json["actions"];
+            for (int i = 0; i < 3; i++) {
+                id[i] = actions[i]["id"] | -1;
+                keyId[i] = actions[i]["keyId"] | KEY_RETURN;
+                activation_point[i] = actions[i]["activation_point"] | 0.5;
+            }
+            emb.actions = embActions(id, keyId, activation_point);
+
             return emb;
         }
 

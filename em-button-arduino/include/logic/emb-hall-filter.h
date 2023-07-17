@@ -91,8 +91,19 @@ class HallFilter {
             return -500;
         }
 
-        bool pressed() {
-            return normalized <= emb->keyData.activation_point * max_normalized ? false : true;
+        int pressed() {
+            // return the index of the action that is pressed
+            int activation_point, indexOfPressed = -1;
+            for(int i = 0; i < 3 && emb->keyData.actions[i].actionId != -1; i++) {
+                // get the activation point for the current action
+                activation_point = max_normalized * emb->keyData.actions[i].activation_point;
+                // if the reading meets it, the index is the current one
+                if(normalized >= activation_point) {
+                    indexOfPressed = i; // the next might also meet criteria, so continue until it fails
+                }
+            }
+            return indexOfPressed;
+            // return normalized <= emb->keyData.activation_point * max_normalized ? false : true;
         }
 
         int denoise() {
