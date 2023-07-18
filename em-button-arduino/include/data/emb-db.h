@@ -1,12 +1,57 @@
 #pragma once
+#include "communication/stp-db-connection.h"
 #include "emb-data.h"
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
+enum class STPMethod2 { GET, POST, PUT, DELETE };
+
+class STP2 {
+    public:
+        static void announceRequest(DynamicJsonDocument json) {
+            Serial.print("\nReceived STP1.0 ");
+            Serial.print(json["method"].as<String>());
+            Serial.print(" ");
+            Serial.print(json["route"].as<String>());
+            Serial.println(" request.\n");
+        }
+        static String createRequest(STPMethod2 method, String route, String body) {
+            String request = "STP1.0{\"method\":\"";
+            switch (method) {
+                case STPMethod2::GET:
+                    request += "GET";
+                    break;
+                case STPMethod2::POST:
+                    request += "POST";
+                    break;
+                case STPMethod2::PUT:
+                    request += "PUT";
+                    break;
+                case STPMethod2::DELETE:
+                    request += "DELETE";
+                    break;
+            }
+            request += "\",\"route\":\"";
+            request += route + "\",\"body\":";
+            request += body + "}";
+            return request;
+        }
+        static String createResponse(int status, String message) {
+            String response = "STP1.0{\"status\":";
+            response += status;
+            response += ",\"data\":{\"message\":\"";
+            response += message + "\"}}";
+            return response;
+        }
+        static String createResponse(int status, String message, String dataKey, String data) {
+            String response = "STP1.0{\"status\":";
+            response += status;
+            response += ",\"data\":{\"message\":\"";
+            response += message + "\",\"" + dataKey + "\":" + data + "}}";
+            return response;
+        }
+};
 
 class EmbButtonDB {
-  private:
-    File databaseFile;
-    
   public:
     String file = "/emb-db.data";
     String table;
@@ -14,17 +59,62 @@ class EmbButtonDB {
       this->table = table;
     }
 
-    void begin() {
+    bool begin() {
+      Serial.println(STP2::createResponse(200, "Mounting file system"));
       if(!SPIFFS.begin(true)) {
-        Serial.println("Failed to mount file system");
-        return;
+        Serial.println(STP2::createResponse(500, "An error occurred while mounting file system"));
+        return false;
       }
-      Serial.println("File system mounted");
-      Serial.print("File size: ");
-      Serial.println(SPIFFS.totalBytes());
+      Serial.println(STP2::createResponse(200, "File system mounted"));
+      // Serial.print("File size: ");
+      // Serial.println(SPIFFS.totalBytes());
+      return true;
     }
 
-    bool exists(int id) {
+    // get the string of the first record whose ID is equal to int id, parse it from json to EmbButton object and return it
+    EmbButton get(int id) {
+      EmbButton emb;
+      emb.id = -1;
+      for (int i = 0; i < 3; i++) {
+        emb.actions[i].actionId = -1;
+      }
+      if(!SPIFFS.exists(this->file)) {
+        Serial.println(STP2::createResponse(404, "File does not exist"));
+        return emb;
+      }
+
+      File file = SPIFFS.open(this->file, "r");
+      if(!file) {
+        Serial.println(STP2::createResponse(500, "Failed to open file for reading"));
+        return emb;
+      }
+
+      while(file.available()) {
+        String record = file.readStringUntil('\n');
+        DynamicJsonDocument json(1024);
+        deserializeJson(json, record);
+        if(json["id"].as<int>() == id) {
+          file.close();
+          emb.id = json["id"].as<int>();
+          emb.electromagnet = json["electromagnet"].as<int>();
+          emb.hall_sensor = json["hall_sensor"].as<int>();
+          JsonArray actions = json["actions"].as<JsonArray>();
+          for (int i = 0; i < 3; i++) {
+            emb.actions[i].actionId = actions[i]["actionId"].as<int>();
+            emb.actions[i].keyId = actions[i]["keyId"].as<int>();
+            emb.actions[i].activation_point = actions[i]["activation_point"].as<int>();
+          }
+          return emb;
+        }
+      }
+      
+      file.close();
+      Serial.println(STP2::createResponse(404, "Record not found"));
+      return emb;
+    }
+
+    template <typename T>
+    bool exists(String key, T value) {
       if(!SPIFFS.exists(this->file)) {
         Serial.println("File does not exist");
         return false;
@@ -32,52 +122,72 @@ class EmbButtonDB {
 
       File file = SPIFFS.open(this->file, "r");
       if(!file) {
-        Serial.println("Failed to open file for reading");
+        Serial.println(STP2::createResponse(500, "Failed to open file for reading"));
         return false;
       }
 
-      EmbButton emb;
-      size_t size = sizeof(emb);
-      uint8_t* buf = (uint8_t*) &emb;
-
-      while(file.read(buf, size)) {
-        if(emb.id == id) {
+      while(file.available()) {
+        String record = file.readStringUntil('\n');
+        DynamicJsonDocument json(1024);
+        deserializeJson(json, record);
+        if(json[key].as<T>() == value) {
           file.close();
           return true;
         }
       }
-
+      
       file.close();
       return false;
 
     }
 
-    void add(EmbButton emb) {
+    void clear() {
       File file = SPIFFS.open(this->file, "a");
       if (!file) {
-        Serial.println("Failed to open file for appending");
+        Serial.println(STP2::createResponse(500, "Failed to open file for appending (trying to clear file)"));
         return;
+      }
+      SPIFFS.remove(this->file);
+      Serial.println("Database cleared");
+      file.close();
+    }
+
+    int add(EmbButton emb) {
+      File file = SPIFFS.open(this->file, "a");
+      if (!file) {
+        Serial.println(STP2::createResponse(500, "Failed to open file for appending (trying to add record)"));
+        return -1;
       }
 
       if (!emb.id) {
         int newID = 1;
-        while (exists(newID))
+        while (exists("id", newID))
           newID++;
         emb.id = newID;
       }
 
-      // Check if the ID is already in the database
-      if (exists(emb.id)) {
-        Serial.println("ID already exists in database");
-        return;
+      if (exists("id", emb.id)) {
+        Serial.println(STP2::createResponse(409, "Record with that ID already exists"));
+        return -1;
       }
 
-      size_t size = sizeof(emb);
-      uint8_t* buf = (uint8_t*) &emb;
-      file.write(buf, size);
-      file.close();
+      DynamicJsonDocument json(1024);
+      json["id"] = emb.id;
+      json["electromagnet"] = emb.electromagnet;
+      json["hall_sensor"] = emb.hall_sensor;
+      JsonArray actions = json.createNestedArray("actions");
+      for (int i = 0; i < 3; i++) {
+        actions[i]["id"] = emb.actions[i].actionId;
+        actions[i]["keyId"] = emb.actions[i].keyId;
+        actions[i]["activation_point"] = emb.actions[i].activation_point;
+      }
 
-      Serial.println("Record added");
+      String jsonString;
+      serializeJson(json, jsonString);
+
+      file.println(jsonString);
+
+      return emb.id;
 
     }
 
@@ -88,7 +198,7 @@ class EmbButtonDB {
 
       File file = SPIFFS.open(this->file, "a");
       if(!file) {
-        Serial.println("Failed to open file for appending");
+        Serial.println(STP2::createResponse(500, "Failed to open file for appending (trying to update record)"));
         return false;
       }
 
@@ -96,25 +206,25 @@ class EmbButtonDB {
       uint8_t* buf = (uint8_t*) &emb;
       file.write(buf, size);
       file.close();
-      Serial.println("Record updated");
+      
       return true;
     }
 
     bool remove(int embId) {
       if(!SPIFFS.exists(this->file)) {
-        Serial.println("File does not exist");
+        Serial.println(STP2::createResponse(404, "File does not exist"));
         return false;
       }
 
       File inFile = SPIFFS.open(this->file, "r");
       if(!inFile) {
-        Serial.println("Failed to open input file");
+        Serial.println(STP2::createResponse(500, "Failed to open input file for reading (revmoing record)"));
         return false;
       }
 
       File outFile = SPIFFS.open("/emb-db-tmp.data", "w");
       if(!outFile) {
-        Serial.println("Failed to open output file");
+        Serial.println(STP2::createResponse(500, "Failed to open output file for writing (removing record)"));
         inFile.close();
         return false;
       }
@@ -139,48 +249,38 @@ class EmbButtonDB {
       SPIFFS.rename("/emb-db-tmp.data", this->file);
 
       if(removed) {
-        Serial.println("Record removed");
+        Serial.println(STP2::createResponse(200, "Record removed"));
       } else {
-        Serial.println("Record not found");
+        Serial.println(STP2::createResponse(404, "Record not found"));
       }
       return removed;
     }
 
-    void printAll() {
+    String* getAll() {
+      
+      // print all lines in the document (each newline is a new object) (objects are all json strings)
+      String* database = new String[100];
+
       if(!SPIFFS.exists(this->file)) {
-        Serial.println("File does not exist");
-        return;
+        String response = STP2::createResponse(404, "File does not exist");
+        Serial.println(response);
+        return database;
       }
 
       File file = SPIFFS.open(this->file, "r");
       if(!file) {
-        Serial.println("Failed to open file for reading");
-        return;
+        String response = STP2::createResponse(500, "Failed to open file for reading");
+        Serial.println(response);
+        return database;
       }
-
-      EmbButton emb;
-      size_t size = sizeof(emb);
-      uint8_t* buf = (uint8_t*) &emb;
-
-      while(file.read(buf, size)) {
-        Serial.print("ID: ");
-        Serial.println(emb.id);
-        Serial.print("Actions: ");
-        for(int i = 0; i < 3; i++) {
-          if(emb.actions[i].actionId != -1) {
-            Serial.print("\t");
-            Serial.print(i);
-            Serial.print(". ID: ");
-            Serial.print(emb.actions[i].actionId);
-            Serial.print(", key: ");
-            Serial.print(emb.actions[i].keyId);
-            Serial.print(" activates at ");
-            Serial.print(emb.actions[i].activation_point);
-          }
-        }
+      int i = 0;
+      while(file.available()) {
+        database[i++] = file.readStringUntil('\n'); 
+        Serial.println(database[i - 1]);
       }
 
       file.close();
+      return database;
     }
 
 };

@@ -48,7 +48,7 @@ void loop() {
     if(newReading > -11) {
       // Serial.print("printing: ");
       // Serial.println(newReading);
-      embServer.refreshDisplayData();
+      displayManager.drawScene();
     }
     KeyboardLogic::getConnectionStatusUpdate(emb);
     if(KeyboardLogic::keyboardLogic(filter)) {

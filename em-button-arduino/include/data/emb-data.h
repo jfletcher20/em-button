@@ -32,13 +32,13 @@ typedef int Pin;
 struct EmbButton {
     uint8_t id = 0;
     Pin electromagnet = 13, hall_sensor = 4;
-    EmbAction* actions = embActions(new int[3]{0, -1, -1}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.8});
+    EmbAction* actions = embActions(new int[3]{0, 1, 2}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.7});
 };
 
 struct Emb {
     const char name[20] = "ESP32 Emb Keyboard";
     const char manufacturer[20] = "IoT Lab, FOI";
-    const char version[10] = "v0.1.4";
+    const char version[10] = "v0.2.1";
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;

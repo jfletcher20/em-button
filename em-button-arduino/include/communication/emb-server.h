@@ -1,8 +1,8 @@
 #pragma once
 
-#include "clientside-serial-transfer-protocol.h"
 #include "logic/emb-hall-filter.h"
 #include "logic/keyboard-logic.h"
+#include "stp-db-connection.h"
 #include "logic/emb-logic.h"
 #include "display.h"
 #include "routes.h"
@@ -10,7 +10,7 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
-// STPDBCommunication stp("testing");
+// STPDBConnection stp("testing");
 
 class EmbServer {
     private:
@@ -68,7 +68,7 @@ class EmbServer {
                     String jsonData = c.substring(6);
                     DynamicJsonDocument doc(1024);
                     deserializeJson(doc, jsonData);
-                    announceRequest(doc);
+                    STP::announceRequest(doc);
                     handleRequest(doc["route"], doc);
                     /* example request:
                     STP1.0{"route":"/device/calibrate/","method":"get"}
@@ -89,22 +89,21 @@ class EmbServer {
                 // Handle /db/ route
             } else if (String(route) == String(routes[2])) {
                 // Handle /device/calibrate/ route
-                Serial.println("STP1.0{\"status\":200,\"data\":{\"message\":\"Beginning calibration; the device will now restart\"}}");
+                Serial.println(STP::createResponse(200, "Beginning calibration; the device will now restart"));
                 filter->calibrate();
             } else if (String(route) == String(routes[3])) {
                 // Handle /device/enable/ route
                 *enableDevice = true;
-                Serial.println("STP1.0{\"status\":200,\"data\":{\"message\":\"Device enabled\"}}");
+                Serial.println(STP::createResponse(200, "Device enabled"));
             } else if (String(route) == String(routes[4])) {
                 // Handle /device/disable/ route
                 *enableDevice = false;
-                Serial.println("STP1.0{\"status\":200,\"data\":{\"message\":\"Device disabled\"}}");
+                Serial.println(STP::createResponse(200, "Device disabled"));
             } else if (String(route) == String(routes[5])) {
                 // Handle /device/data/ route
-                Serial.print("STP1.0{\"status\":200,\"data\":");
-                Serial.println(displayManager->getJson().c_str() + String("}"));
+                Serial.print(STP::createResponse(200, "Accessed data route successfully", "data", displayManager->getJson().c_str()));
             } else {
-                Serial.println("404 Bad requrest: Route not found");
+                Serial.println(STP::createResponse(404, "Route not found"));
             }
             displayManager->drawScene();
         }
@@ -113,13 +112,13 @@ class EmbServer {
             STPMethod req = method(json);
             switch(req) {
                 default:
-                    Serial.println("400 Bad request");
+                    Serial.println(STP::createResponse(200, "Welcome to the Emb Keyboard API"));
             }
         }
 
         void dbRoute(DynamicJsonDocument json) {
             // stp.requestLogic(method(json), json);
-            Serial.println("db route");
+            Serial.println(STP::createResponse(200, "Accessed database route successfully"));
         }
 
 };
