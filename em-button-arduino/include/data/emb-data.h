@@ -30,32 +30,20 @@ EmbAction* embActions(int id[3], int keyId[3], double activation_point[3]) {
 
 typedef int Pin;
 struct EmbButton {
-    uint8_t id = 0;
+    uint8_t id = 20;
+    // hall sensor wire order:
+    //      yellow | green | blue when hall sensor has back facing wires
+    //      pin 13 |  gnd  |  vcc
     Pin electromagnet = 13, hall_sensor = 4;
+    double electromagnet_power = 1.0;
     EmbAction* actions = embActions(new int[3]{0, 1, 2}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.7});
 };
 
 struct Emb {
     const char name[20] = "ESP32 Emb Keyboard";
     const char manufacturer[20] = "IoT Lab, FOI";
-    const char version[10] = "v0.2.1";
+    const char version[10] = "v0.3.5";
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;
 };
-
-/*
-DynamicJsonDocument parseStruct(EmbButton emb) {
-    // Create a new JSON object with enough capacity for the EmbButton struct
-    DynamicJsonDocument doc(JSON_OBJECT_SIZE(5));
-    
-    // Add each field of the EmbButton struct to the JSON object
-    doc["id"] = emb.id;
-    doc["keyId"] = emb.keyId;
-    doc["activation_point"] = emb.activation_point;
-    doc["electromagnet"] = emb.electromagnet;
-    doc["hall_sensor"] = emb.hall_sensor;
-    
-    return doc;
-}
-*/

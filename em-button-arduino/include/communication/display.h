@@ -78,20 +78,24 @@ class DisplayManager {
         }
         std::string getJson() {
             DynamicJsonDocument doc(1024);
-            doc["current_value"] = filter->getDisplayValue();
-            doc["value_normalized"] = filter->normalized;
-            doc["times_pressed"] = *timesPressed;
-            // add the actions in a list
+            doc["id"] = filter->emb->keyData.id;
+            doc["electromagnet_pin"] = filter->emb->keyData.electromagnet;
+            doc["hall_sensor_pin"] = filter->emb->keyData.hall_sensor;
+            doc["electromagnet_power"] = filter->emb->keyData.electromagnet_power;
             JsonArray actions = doc.createNestedArray("actions");
             for(int i = 0; i < 3 && filter->emb->keyData.actions[i].actionId != -1; i++) {
                 JsonObject action = actions.createNestedObject();
-                action["id"] = filter->emb->keyData.actions[i].actionId;
+                action["actionId"] = filter->emb->keyData.actions[i].actionId;
                 action["keyId"] = filter->emb->keyData.actions[i].keyId;
                 action["activation_point"] = filter->emb->keyData.actions[i].activation_point;
             }
+            doc["current_value"] = filter->getDisplayValue();
+            doc["value_normalized"] = filter->normalized;
+            doc["times_pressed"] = *timesPressed;
             doc["button_pressed"] = filter->pressed();
             doc["device_enabled"] = *enableDevice;
             doc["ble_connected"] = filter->emb->connectionStatus.keyboardConnected;
+            doc["time_when_retrieved"] = millis();
             String json;
             serializeJson(doc, json);
             return json.c_str();

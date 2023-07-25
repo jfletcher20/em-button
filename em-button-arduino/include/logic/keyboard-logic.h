@@ -53,7 +53,7 @@ class KeyboardLogic {
         filter.emb->keyboard.releaseAll();
         filter.emb->keyboard.write(filter.emb->keyData.actions[indexOfPressed].keyId);
 
-        Serial.println("✓");
+        Serial.print("✓"); Serial.println(indexOfPressed);
         keyBlock.keyLock = 1;
 
       }

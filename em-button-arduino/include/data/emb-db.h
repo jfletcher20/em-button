@@ -71,7 +71,6 @@ class EmbButtonDB {
       return true;
     }
 
-    // get the string of the first record whose ID is equal to int id, parse it from json to EmbButton object and return it
     EmbButton get(int id) {
       EmbButton emb;
       emb.id = -1;
@@ -97,6 +96,8 @@ class EmbButtonDB {
           file.close();
           emb.id = json["id"].as<int>();
           emb.electromagnet = json["electromagnet"].as<int>();
+          double strength = json["electromagnet"].as<double>();
+          emb.electromagnet_power = strength > 1 ? 1 : strength < 0 ? 0 : strength;
           emb.hall_sensor = json["hall_sensor"].as<int>();
           JsonArray actions = json["actions"].as<JsonArray>();
           for (int i = 0; i < 3; i++) {
@@ -152,7 +153,11 @@ class EmbButtonDB {
       file.close();
     }
 
-    int add(EmbButton emb) {
+    int add(EmbButton emb, bool clear = false) {
+      if(clear) {
+        this->clear();
+      }
+
       File file = SPIFFS.open(this->file, "a");
       if (!file) {
         Serial.println(STP2::createResponse(500, "Failed to open file for appending (trying to add record)"));
@@ -174,10 +179,11 @@ class EmbButtonDB {
       DynamicJsonDocument json(1024);
       json["id"] = emb.id;
       json["electromagnet"] = emb.electromagnet;
+      json["electromagnet_power"] = emb.electromagnet_power;
       json["hall_sensor"] = emb.hall_sensor;
       JsonArray actions = json.createNestedArray("actions");
       for (int i = 0; i < 3; i++) {
-        actions[i]["id"] = emb.actions[i].actionId;
+        actions[i]["actionId"] = emb.actions[i].actionId;
         actions[i]["keyId"] = emb.actions[i].keyId;
         actions[i]["activation_point"] = emb.actions[i].activation_point;
       }

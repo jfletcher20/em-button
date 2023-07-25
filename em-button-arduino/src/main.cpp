@@ -5,10 +5,10 @@
 bool enableDevice = true;
 
 Emb emb;
-HallFilter filter(&emb);
-DisplayManager displayManager(&filter, &enableDevice, &keyBlock.timesPressed);
+HallFilter* filter = new HallFilter(&emb);
+DisplayManager displayManager(filter, &enableDevice, &keyBlock.timesPressed);
 
-EmbServer embServer(&filter, &displayManager, &enableDevice);
+EmbServer embServer(filter, &displayManager, &enableDevice);
 
 void setup() {
 
@@ -18,7 +18,16 @@ void setup() {
   pinMode(2, OUTPUT); // blue LED
 
   Serial.begin(115200);
-  emb.keyboard.end();
+
+  // init emb by reading from database
+  DynamicJsonDocument json(1024);
+  String embString = embServer.stp.database->getAll()[0];
+  deserializeJson(json, embString);
+
+  emb.keyData = embServer.stp.embFromJson(json);
+  delete filter;
+  filter = new HallFilter(&emb);
+
   emb.keyboard.begin();
 
   displayManager.setup();
@@ -42,16 +51,15 @@ void loop() {
 
   userButtonLogic(); // user button should always be available regardless of whether 
   if(enableDevice) {
-    analogWrite(emb.keyData.electromagnet, 255);
-    // if filter has new reading print normalize
-    int newReading = filter.normalize();
+    analogWrite(emb.keyData.electromagnet, emb.keyData.electromagnet_power * 255);
+    int newReading = filter->normalize();
     if(newReading > -11) {
-      // Serial.print("printing: ");
-      // Serial.println(newReading);
       displayManager.drawScene();
     }
-    KeyboardLogic::getConnectionStatusUpdate(emb);
-    if(KeyboardLogic::keyboardLogic(filter)) {
+    if(KeyboardLogic::getConnectionStatusUpdate(emb)) {
+      displayManager.drawScene();
+    }
+    if(KeyboardLogic::keyboardLogic(*filter)) {
       counter++;
       if(counter > 15) { // if it refreshes too often, it causes lag
         counter = 0;

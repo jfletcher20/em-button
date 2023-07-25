@@ -1,3 +1,4 @@
+#include "communication/stp-db-connection.h"
 #include "communication/emb-server.h"
 #include "communication/display.h"
 #include "logic/emb-hall-filter.h"

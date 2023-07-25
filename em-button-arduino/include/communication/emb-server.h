@@ -10,7 +10,6 @@
 #include <ArduinoJson.h>
 #include <Arduino.h>
 
-// STPDBConnection stp("testing");
 
 class EmbServer {
     private:
@@ -21,10 +20,73 @@ class EmbServer {
             Serial.print(json["route"].as<String>());
             Serial.println(" request.\n");
         }
+
+        String getRouteByKey(Routes key) {
+            return routes[key];
+        }
+
+        void getRootRoute(DynamicJsonDocument json) {
+            STPMethod req = method(json);
+            switch(req) {
+                default:
+                    Serial.println(STP::createResponse(200, "Welcome to the Emb Keyboard API"));
+            }
+        }
+
+        void dbRouteManager(DynamicJsonDocument json) {
+            STPMethod req = method(json);
+            stp.requestLogic(req, json);
+            Serial.println(STP::createResponse(200, "Accessed database route successfully"));
+        }
+
+        void getCalibrateRoute() {
+            Serial.println(STP::createResponse(200, "Beginning calibration; the device will now restart"));
+            calibrateFilter();
+        }
+
+        void putEnableDisableRoute(bool enable) {
+            if(enable) {
+                *enableDevice = true;
+                Serial.println(STP::createResponse(200, "Device enabled"));
+            } else {
+                *enableDevice = false;
+                Serial.println(STP::createResponse(200, "Device disabled"));
+            }
+        }
+
+        void getDataRoute() {
+            Serial.println(STP::createResponse(200, "Accessed data route successfully", "data", displayManager->getJson().c_str()));
+        }
+
+        void getElectromagnetDataRoute() {
+            Serial.println(STP::createResponse(200, "Accessed electromagnet data", "electromagnet_power", String(filter->emb->keyData.electromagnet_power)));
+        }
+
+        void putElectromagnetDataRoute(DynamicJsonDocument json) {
+            Serial.println(STP::createResponse(200, "Updating electromagnet power from " + String(filter->emb->keyData.electromagnet_power), "electromagnet_power", String(json["electromagnet_power"].as<double>())));
+            filter->emb->keyData.electromagnet_power = constrain(json["electromagnet_power"].as<double>(), 0, 1);
+            stp.database->add(this->filter->emb->keyData, true);
+            calibrateFilter();
+        }
+
+        void getHallSensorDataRoute() {
+            Serial.println(STP::createResponse(200, "Accessed hall sensor data", "current_value", String(filter->getDisplayValue())));
+        }
+
+        void getHallSensorDataNormalizedRoute() {
+            Serial.println(STP::createResponse(200, "Accessed normalized hall sensor data", "value_normalized", String(filter->normalized)));
+        }
+
+        void putEmbDataRoute(DynamicJsonDocument json) {
+            this->filter->emb->keyData = stp.embFromJson(json);
+            stp.database->add(this->filter->emb->keyData, true);
+            calibrateFilter();
+        }
     public:
         HallFilter* filter;
         DisplayManager* displayManager;
         bool* enableDevice;
+        STPDBConnection stp = STPDBConnection("emb-db");
         EmbServer(HallFilter* filter, DisplayManager* displayManager, bool* enableDevice) {
             this->filter = filter;
             this->displayManager = displayManager;
@@ -77,48 +139,50 @@ class EmbServer {
             }
         }
 
-        void refreshDisplayData() {
+        void localRequestLogic(String request) {
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, request);
+            STP::announceRequest(doc);
+            handleRequest(doc["route"], doc);
+        }
+
+        void refreshDisplayData(bool printData = true) {
             displayManager->drawScene();
-            Serial.println(displayManager->getJson().c_str());
+            if(printData) Serial.println(STP::createResponse(200, "Data refreshed successfully", "current_state", displayManager->getJson().c_str()));
         }
 
         void handleRequest(String route, DynamicJsonDocument json) {
-            if (String(route) == String(routes[0])) {
-                rootRoute(json);
-            } else if (String(route) == String(routes[1])) {
-                // Handle /db/ route
-            } else if (String(route) == String(routes[2])) {
-                // Handle /device/calibrate/ route
-                Serial.println(STP::createResponse(200, "Beginning calibration; the device will now restart"));
-                filter->calibrate();
-            } else if (String(route) == String(routes[3])) {
-                // Handle /device/enable/ route
-                *enableDevice = true;
-                Serial.println(STP::createResponse(200, "Device enabled"));
-            } else if (String(route) == String(routes[4])) {
-                // Handle /device/disable/ route
-                *enableDevice = false;
-                Serial.println(STP::createResponse(200, "Device disabled"));
-            } else if (String(route) == String(routes[5])) {
-                // Handle /device/data/ route
-                Serial.print(STP::createResponse(200, "Accessed data route successfully", "data", displayManager->getJson().c_str()));
+            if (String(route) == getRouteByKey(Routes::ROOT)) {
+                getRootRoute(json);
+            } else if (String(route) == getRouteByKey(Routes::DB)) {
+                dbRouteManager(json);
+            } else if (String(route) == getRouteByKey(Routes::CALIBRATE)) {
+                getCalibrateRoute();
+            } else if (String(route) == getRouteByKey(Routes::ENABLE) && method(json) == STPMethod::PUT) {
+                putEnableDisableRoute(true);
+            } else if (String(route) == getRouteByKey(Routes::DISABLE) && method(json) == STPMethod::PUT) {
+                putEnableDisableRoute(false);
+            } else if (String(route) == getRouteByKey(Routes::DATA)) {
+                getDataRoute();
+            } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET)) {
+                getElectromagnetDataRoute();
+            } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET_POWER) && method(json) == STPMethod::PUT) {
+                putElectromagnetDataRoute(json);
+            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR)) {
+                getHallSensorDataRoute();
+            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR_NORMALIZED)) {
+                getHallSensorDataNormalizedRoute();
             } else {
                 Serial.println(STP::createResponse(404, "Route not found"));
             }
             displayManager->drawScene();
         }
 
-        void rootRoute(DynamicJsonDocument json) {
-            STPMethod req = method(json);
-            switch(req) {
-                default:
-                    Serial.println(STP::createResponse(200, "Welcome to the Emb Keyboard API"));
-            }
-        }
-
-        void dbRoute(DynamicJsonDocument json) {
-            // stp.requestLogic(method(json), json);
-            Serial.println(STP::createResponse(200, "Accessed database route successfully"));
+        void calibrateFilter() {
+            *enableDevice = false;
+            delete filter;
+            filter = new HallFilter(filter->emb);
+            *enableDevice = true;
         }
 
 };

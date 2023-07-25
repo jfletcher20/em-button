@@ -14,7 +14,7 @@ class STP {
             Serial.print(json["route"].as<String>());
             Serial.println(" request.\n");
         }
-        static String createRequest(STPMethod method, String route, String body) {
+        static String createRequest(STPMethod method, String route, String body = "{}") {
             String request = "STP1.0{\"method\":\"";
             switch (method) {
                 case STPMethod::GET:
@@ -77,27 +77,6 @@ class STPDBConnection {
             }
         }
 
-        EmbButton embFromJson(DynamicJsonDocument json) {
-            EmbButton emb;
-            emb.id = json["id"] | 0;
-            emb.electromagnet = json["electromagnet"] | 13;
-            emb.hall_sensor = json["hall_sensor"] | 4;
-            
-            int id[3];
-            int keyId[3];
-            double activation_point[3];
-
-            JsonArray actions = json["actions"];
-            for (int i = 0; i < 3; i++) {
-                id[i] = actions[i]["id"] | -1;
-                keyId[i] = actions[i]["keyId"] | KEY_RETURN;
-                activation_point[i] = actions[i]["activation_point"] | 0.5;
-            }
-            emb.actions = embActions(id, keyId, activation_point);
-
-            return emb;
-        }
-
     public:
         EmbButtonDB* database;
 
@@ -116,6 +95,28 @@ class STPDBConnection {
             } else {
                 postOrPut(req, json);
             }
+        }
+
+        EmbButton embFromJson(DynamicJsonDocument json) {
+            EmbButton emb;
+            emb.id = json["id"] | 0;
+            emb.electromagnet = json["electromagnet"] | 13;
+            emb.electromagnet_power = json["electromagnet_power"] | 1.0;
+            emb.hall_sensor = json["hall_sensor"] | 4;
+            
+            int id[3];
+            int keyId[3];
+            double activation_point[3];
+
+            JsonArray actions = json["actions"];
+            for (int i = 0; i < 3; i++) {
+                id[i] = actions[i]["actionId"] | -1;
+                keyId[i] = actions[i]["keyId"] | KEY_RETURN;
+                activation_point[i] = actions[i]["activation_point"] | 0.5;
+            }
+            emb.actions = embActions(id, keyId, activation_point);
+
+            return emb;
         }
 
 };

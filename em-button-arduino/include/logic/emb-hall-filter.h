@@ -60,14 +60,6 @@ class HallFilter {
         }
 
         void calibrate() {
-            // doing all of this doesn't properly calibrate the device for some reason
-            // DEFAULT_VALUE = getValue();
-            // current = DEFAULT_VALUE;
-            // normalized = localInd = sum = 0;
-            // for (int i = 0; i < WINDOW_SIZE; i++) {
-            //     values[i] = DEFAULT_VALUE;
-            //     sum += DEFAULT_VALUE;
-            // }
             ESP.restart();
         }
 
