@@ -33,6 +33,17 @@ class EmbServer {
             }
         }
 
+        // route to return list of routes
+        void getRoutesRoute() {
+            String routesJson = "[";
+            for(int i = 0; i < sizeof(routes) / sizeof(routes[0]); i++) {
+                routesJson += "\"" + routes[i] + "\"";
+                if(i < sizeof(routes) / sizeof(routes[0]) - 1) routesJson += ",";
+            }
+            routesJson += "]";
+            Serial.println(STP::createResponse(200, "Accessed routes route successfully", "routes", routesJson));
+        }
+
         void dbRouteManager(DynamicJsonDocument json) {
             STPMethod req = method(json);
             stp.requestLogic(req, json);
@@ -154,6 +165,8 @@ class EmbServer {
         void handleRequest(String route, DynamicJsonDocument json) {
             if (String(route) == getRouteByKey(Routes::ROOT)) {
                 getRootRoute(json);
+            } else if (String(route) == getRouteByKey(Routes::ROUTES)) {
+                getRoutesRoute();
             } else if (String(route) == getRouteByKey(Routes::DB)) {
                 dbRouteManager(json);
             } else if (String(route) == getRouteByKey(Routes::CALIBRATE)) {

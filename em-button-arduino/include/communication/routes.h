@@ -1,6 +1,7 @@
 enum Routes {
     ROOT,
     DB,
+    ROUTES,
     CALIBRATE,
     ENABLE,
     DISABLE,
@@ -14,7 +15,8 @@ enum Routes {
 
 const String routes[] = {
     "/",
-    "/db/",
+    "/db/", // example: STP1.0{"route":"/db/","method":"get"}
+    "/device/routes/",
     "/device/calibrate/",
     "/device/enable/",
     "/device/disable/",

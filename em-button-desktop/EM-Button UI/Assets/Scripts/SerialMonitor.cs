@@ -13,7 +13,7 @@ public class SerialMonitor : MonoBehaviour {
 
     SerialPort port;
     public TextMeshProUGUI monitorDataComponent;
-
+    public TextMeshProUGUI portDataComponent;
 
     PortDescription search() => SerialPortStream.GetPortDescriptions().FirstOrDefault(p => p.Description.Contains(deviceName));
 
@@ -29,7 +29,7 @@ public class SerialMonitor : MonoBehaviour {
             return;
         }
         updateMonitor(new KeyValuePair<string, string>("port", portName(discoveredPort.ToString())));
-        openPort(discoveredPort.Port);
+        openPort(discoveredPort);
     }
 
     void initSerialPort(PortDescription discoveredPort) {
@@ -38,19 +38,32 @@ public class SerialMonitor : MonoBehaviour {
             return;
         }
         updateMonitor(new KeyValuePair<string, string>("port", portName(discoveredPort.ToString())));
-        openPort(discoveredPort.Port);
+        openPort(discoveredPort);
     }
 
     public string portName(string discoveredPort) => discoveredPort.Substring(0, discoveredPort.IndexOf(")") + 1);
 
-    public void openPort(string port) {
-        this.port = new SerialPort(port, baudRate);
-        this.port.ReadTimeout = 1;
-        this.port.Open();
+    public void openPort(PortDescription discoveredPort) {
+        port = new SerialPort(discoveredPort.Port, baudRate);
+        port.ReadTimeout = 1;
+        attemptToOpenPort();
+    }
+
+    private void attemptToOpenPort() {
+        try {
+            portDataComponent.color = Color.white;
+            port.Open();
+        } catch {
+            portDataComponent.text = "ERROR: Port is in use by another process.";
+            monitorDataComponent.text = "ERROR\n\nThe port is currently in use by another process.\n"
+                + "Close any other programs and click the settings button to refresh.";
+            portDataComponent.color = Color.red;
+        }
     }
 
     public void portNotFound() {
         updateMonitor(new KeyValuePair<string, string>("port", _portNotFound));
+        refreshMonitor(new Dictionary<string, object>());
     }
 
     private void OnDisable() {
@@ -69,6 +82,9 @@ public class SerialMonitor : MonoBehaviour {
         timer -= Time.deltaTime;
         if (timer <= 0) {
             _port();
+            if (!port.IsOpen) {
+
+            }
             if (port != null) _log();
             timer = timerDuration;
         }
@@ -102,7 +118,13 @@ public class SerialMonitor : MonoBehaviour {
     }
 
     public void sendCommand(STPCommand command) {
-        port.Write(command.ToString());
+        if(!port.IsOpen) {
+            try {
+                port.Open();
+                refreshMonitor();
+            } catch { }
+        } else
+            port.Write(command.ToString());
     }
 
     public KeyValuePair<float, string> read() => log;
@@ -152,9 +174,9 @@ public class SerialMonitor : MonoBehaviour {
         return false;
     }
     public void refreshMonitor() {
-        monitorDataComponent.text = "";
+        portDataComponent.text = "";
         foreach (string key in currentMonitorData.Keys) {
-            monitorDataComponent.text += key.ToUpper() + ": " + currentMonitorData[key] + "\n";
+            portDataComponent.text += key.ToUpper() + ": " + currentMonitorData[key] + "\n";
         }
     }
 

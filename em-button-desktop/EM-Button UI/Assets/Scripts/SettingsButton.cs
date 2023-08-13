@@ -23,7 +23,7 @@ public class SettingsButton : MonoBehaviour {
     }
 
     void initRoutes() {
-        STPCommand command = STPCommand.from("/", STPMethod.GET);
+        STPCommand command = STPCommand.from("/device/routes/", STPMethod.GET);
         serialMonitor.sendCommand(command);
     }
 

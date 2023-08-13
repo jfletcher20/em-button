@@ -280,10 +280,13 @@ class EmbButtonDB {
         return database;
       }
       int i = 0;
+      Serial.print("STP1.0{\"status\":200,\"data\":[");
       while(file.available()) {
-        database[i++] = file.readStringUntil('\n'); 
+        database[i++] = file.readStringUntil('\n');
         Serial.println(database[i - 1]);
+        Serial.print(",");
       }
+      Serial.println("]}");
 
       file.close();
       return database;

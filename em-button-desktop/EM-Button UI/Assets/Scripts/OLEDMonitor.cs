@@ -20,7 +20,7 @@ public class OLEDMonitor : MonoBehaviour {
         dataToDisplay.Add("Current", status.data.current_state.current_value + " (" + status.data.current_state.value_normalized + ")");
         int val = -1;
         try { val = int.Parse(status.data.current_state.button_pressed.ToString()); } catch { }
-        dataToDisplay.Add("Pressed", val == -1 ? "/\\" : "__" + " (x" + status.data.current_state.times_pressed);
+        dataToDisplay.Add("Pressed", val != -1 ? "/\\" : "__" + " (x" + status.data.current_state.times_pressed);
         return dataToDisplay;
     }
 
