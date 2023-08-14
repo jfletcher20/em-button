@@ -3,8 +3,12 @@
 #include "emb-data.h"
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
+/// @brief STPMethod2 is an enum class that represents the STP protocol version 1.
+/// @details Necessary because STPMethod enum wouldn't load properly for some reason via imports.
 enum class STPMethod2 { GET, POST, PUT, DELETE };
 
+/// @brief STP2 is a class that handles the STP protocol version 1.
+/// @details Necessary because STP class wouldn't load properly for some reason via imports.
 class STP2 {
     public:
         static void announceRequest(DynamicJsonDocument json) {
@@ -283,7 +287,7 @@ class EmbButtonDB {
       Serial.print("STP1.0{\"status\":200,\"data\":[");
       while(file.available()) {
         database[i++] = file.readStringUntil('\n');
-        Serial.println(database[i - 1]);
+        Serial.print(database[i - 1]);
         Serial.print(",");
       }
       Serial.println("]}");

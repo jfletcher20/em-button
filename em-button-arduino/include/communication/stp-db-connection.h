@@ -49,6 +49,18 @@ class STP {
             response += message + "\",\"" + dataKey + "\":" + data + "}}";
             return response;
         }
+        // function to create response from array of datakeys and array of data
+        static String createResponse(int status, String message, String dataKeys[], String data[], int size) {
+            String response = "STP1.0{\"status\":" + String(status) + ",\"data\":{\"message\":\"" + message + "\",";
+            for (int i = 0; i < size; i++) {
+                response += "\"" + dataKeys[i] + "\":" + data[i];
+                if (i < size - 1) {
+                    response += ",";
+                }
+            }
+            response += "}}";
+            return response;
+        }
 };
 
 class STPDBConnection {
@@ -110,9 +122,11 @@ class STPDBConnection {
 
             JsonArray actions = json["actions"];
             for (int i = 0; i < 3; i++) {
-                id[i] = actions[i]["actionId"] | -1;
-                keyId[i] = actions[i]["keyId"] | KEY_RETURN;
-                activation_point[i] = actions[i]["activation_point"] | 0.5;
+                DynamicJsonDocument action(100);
+                deserializeJson(action, actions[i].as<String>());
+                id[i] = action["id"] | -1;
+                keyId[i] = action["keyId"] | KEY_RETURN;
+                activation_point[i] = action["activation_point"] | 0.5;
             }
             emb.actions = embActions(id, keyId, activation_point);
 

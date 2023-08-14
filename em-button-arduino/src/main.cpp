@@ -33,9 +33,12 @@ void setup() {
   displayManager.setup();
   displayManager.drawScene();
 
-  Serial.println(emb.manufacturer);
-  Serial.print("Searching for connections for ");
-  Serial.println(emb.name);
+  Serial.print("STP1.0{\"status\":200,\"data\":{\"message\":\"Device is running. Designed as part of bacchelor's thesis by Joshua Lee Fletcher, ");
+  Serial.print(emb.manufacturer);
+  Serial.println(", 2023\"}}");
+  Serial.print("STP1.0{\"status\":300,\"data\":{\"message\":\"Searching for connections for ");
+  Serial.print(emb.name);
+  Serial.println("\"}}");
 
 }
 
@@ -73,7 +76,7 @@ void loop() {
 
 void userButtonLogic() {
   if(digitalRead(0) == HIGH && !pressed && millis() - timePressed > 100) {
-    Serial.println("\nUser button pressed. Refreshing data...");
+    // Serial.println("\nUser button pressed. Refreshing data...");
     embServer.refreshDisplayData();
     pressed = true;
     timePressed = millis();

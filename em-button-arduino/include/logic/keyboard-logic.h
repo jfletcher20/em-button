@@ -2,6 +2,7 @@
 #include "emb-hall-filter.h"
 #include "data/emb-data.h"
 #include "emb-logic.h"
+#include "communication/stp-db-connection.h"
 #include <Arduino.h>
 
 #define DELAY 100 // debouncing delay
@@ -53,7 +54,12 @@ class KeyboardLogic {
         filter.emb->keyboard.releaseAll();
         filter.emb->keyboard.write(filter.emb->keyData.actions[indexOfPressed].keyId);
 
-        Serial.print("✓"); Serial.println(indexOfPressed);
+        // print STP1.0 with data
+        // Serial.println("STP1.0{\"status\":100,\"data\":{\"message\":\"Pressed key" + String(indexOfPressed) + "\",\"keyId\":" + String(filter.emb->keyData.actions[indexOfPressed].keyId) + ",\"timesPressed\":" + String(keyBlock.timesPressed) + ",\"actionId\":" + String(filter.emb->keyData.actions[indexOfPressed].actionId) + ",\"activationPoint\":" + String(filter.emb->keyData.actions[indexOfPressed].activation_point) + ",\"timeWhenPressed\":" + String(millis()) + "}}");
+        // use STP::createResponse
+        String keys[5] = {"keyId", "actionId", "activationPoint", "timesPressed", "timeWhenPressed"};
+        String values[5] = {String(filter.emb->keyData.actions[indexOfPressed].keyId), String(filter.emb->keyData.actions[indexOfPressed].actionId), String(filter.emb->keyData.actions[indexOfPressed].activation_point), String(keyBlock.timesPressed), String(millis())};
+        Serial.println(STP::createResponse(100, "Pressed key" + String(indexOfPressed), keys, values, 5));
         keyBlock.keyLock = 1;
 
       }
@@ -67,11 +73,13 @@ class KeyboardLogic {
       bool registeredChange = false;
       // part to act as keyboard for registering keypresses on the computer
       if(emb.keyboard.isConnected() == true && !emb.connectionStatus.keyboardConnected) {
-        Serial.println(String(emb.name) + ": Keyboard connected!");
+        Serial.println("STP1.0{\"status\":300,\"data\":{\"message\":\"Connected!\"}}");
         emb.connectionStatus.keyboardConnected = 1;
         registeredChange = true;
       } if(!emb.keyboard.isConnected() && emb.connectionStatus.keyboardConnected) {
-        Serial.println(String(emb.name) + ": Keyboard disconnected! Searching for connections...");
+        Serial.print("STP1.0{\"status\":300,\"data\":{\"message\":\"Disconnected! Searching for connections for ");
+        Serial.print(emb.name);
+        Serial.println("\"}}");
         emb.connectionStatus.keyboardConnected = 0;
         registeredChange = true;
       }

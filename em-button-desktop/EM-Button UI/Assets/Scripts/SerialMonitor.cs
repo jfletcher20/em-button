@@ -175,6 +175,7 @@ public class SerialMonitor : MonoBehaviour {
     }
     public void refreshMonitor() {
         portDataComponent.text = "";
+        portDataComponent.color = Color.white;
         foreach (string key in currentMonitorData.Keys) {
             portDataComponent.text += key.ToUpper() + ": " + currentMonitorData[key] + "\n";
         }
@@ -205,3 +206,4 @@ public class SerialMonitor : MonoBehaviour {
     }
 
 }
+

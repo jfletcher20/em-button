@@ -29,7 +29,7 @@ class EmbServer {
             STPMethod req = method(json);
             switch(req) {
                 default:
-                    Serial.println(STP::createResponse(200, "Welcome to the Emb Keyboard API"));
+                    Serial.println(STP::createResponse(200, "To send requests, make sure to include the \"STP1.0\" prefix followed by JSON data. To parse responses, be sure to remove it by parsing from the index of the first \"{\". To see routes available, access \"/device/routes/\". To see this message, access \"/\"."));
             }
         }
 
