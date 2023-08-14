@@ -14,22 +14,54 @@ public class SerialMonitor : MonoBehaviour {
     SerialPort port;
     public TextMeshProUGUI monitorDataComponent;
     public TextMeshProUGUI portDataComponent;
-
-    PortDescription search() => SerialPortStream.GetPortDescriptions().FirstOrDefault(p => p.Description.Contains(deviceName));
-
+    private Color initialPortDataComponentColor;
+    
     private void OnEnable() {
+        initialPortDataComponentColor = portDataComponent.color;
         initSerialPort();
     }
 
+    private const float timerDuration = 0.1f;
+    private float timer = timerDuration;
+
+    void Update() {
+        timer -= Time.deltaTime;
+        serialDataManagement();
+    }
+
+    private void serialDataManagement() {
+        if (timer <= 0) {
+            _port();
+            if (port != null) _log();
+            timer = timerDuration;
+        }
+    }
+
+    PortDescription findSerialPort() => SerialPortStream.GetPortDescriptions().FirstOrDefault(p => p.Description.Contains(deviceName));
+
+
     private string _portNotFound = "Port not found. Please plug in the device.";
+    public void openPort(PortDescription discoveredPort) {
+        port = new SerialPort(discoveredPort.Port, baudRate);
+        port.ReadTimeout = 1;
+        attemptToOpenPort();
+    }
+
     void initSerialPort() {
-        PortDescription discoveredPort = search();
+        PortDescription discoveredPort = findSerialPort();
         if (discoveredPort == null) {
             portNotFound();
             return;
         }
-        updateMonitor(new KeyValuePair<string, string>("port", portName(discoveredPort.ToString())));
+        portDataComponent.text = portName(discoveredPort.ToString());
+        currentMonitorData["port"] = portDataComponent.text;
         openPort(discoveredPort);
+    }
+
+    public void portNotFound() {
+        portDataComponent.text = "ERROR: " + _portNotFound;
+        currentMonitorData["port"] = portDataComponent.text;
+        //refreshMonitor(new Dictionary<string, object>());
     }
 
     void initSerialPort(PortDescription discoveredPort) {
@@ -37,21 +69,16 @@ public class SerialMonitor : MonoBehaviour {
             portNotFound();
             return;
         }
-        updateMonitor(new KeyValuePair<string, string>("port", portName(discoveredPort.ToString())));
+        portDataComponent.text = portName(discoveredPort.ToString());
+        currentMonitorData["port"] = portDataComponent.text;
         openPort(discoveredPort);
     }
 
     public string portName(string discoveredPort) => discoveredPort.Substring(0, discoveredPort.IndexOf(")") + 1);
 
-    public void openPort(PortDescription discoveredPort) {
-        port = new SerialPort(discoveredPort.Port, baudRate);
-        port.ReadTimeout = 1;
-        attemptToOpenPort();
-    }
-
     private void attemptToOpenPort() {
         try {
-            portDataComponent.color = Color.white;
+            portDataComponent.color = initialPortDataComponentColor;
             port.Open();
         } catch {
             portDataComponent.text = "ERROR: Port is in use by another process.";
@@ -61,34 +88,10 @@ public class SerialMonitor : MonoBehaviour {
         }
     }
 
-    public void portNotFound() {
-        updateMonitor(new KeyValuePair<string, string>("port", _portNotFound));
-        refreshMonitor(new Dictionary<string, object>());
-    }
-
-    private void OnDisable() {
-        //if (port != null) {
-        //    port.Close();
-        //}
-    }
-
     private Dictionary<float, string> logs = new Dictionary<float, string>();
     public KeyValuePair<float, string> log { get => logs.Last<KeyValuePair<float, string>>(); }
 
     private string _latestLogVal = "";
-    private const float timerDuration = 0.1f;
-    private float timer = timerDuration;
-    void Update() {
-        timer -= Time.deltaTime;
-        if (timer <= 0) {
-            _port();
-            if (!port.IsOpen) {
-
-            }
-            if (port != null) _log();
-            timer = timerDuration;
-        }
-    }
 
     private PortDescription _portDesc;
     private void _port() {
@@ -96,7 +99,7 @@ public class SerialMonitor : MonoBehaviour {
             initSerialPort();
             return;
         } else {
-            _portDesc = search();
+            _portDesc = findSerialPort();
             if (_portDesc != null) {
                 if (portName(_portDesc.ToString()) != currentMonitorData["port"]) {
                     initSerialPort(_portDesc);
@@ -113,7 +116,7 @@ public class SerialMonitor : MonoBehaviour {
         }
         if (_latestLogVal.Length > 1 && _latestLogVal.StartsWith("STP1.0")) {
             logs.Add(Time.time, _latestLogVal);
-            print(_latestLogVal);
+            //print(_latestLogVal);
         }
     }
 
@@ -121,7 +124,6 @@ public class SerialMonitor : MonoBehaviour {
         if(!port.IsOpen) {
             try {
                 port.Open();
-                refreshMonitor();
             } catch { }
         } else
             port.Write(command.ToString());
@@ -150,6 +152,7 @@ public class SerialMonitor : MonoBehaviour {
             }
         if (refresh) refreshMonitor();
     }
+
     public void updateMonitor(Dictionary<string, object> data) {
         bool refresh = false;
         if (data.Keys.ToList<string>() != currentMonitorData.Keys.ToList<string>())
@@ -160,9 +163,11 @@ public class SerialMonitor : MonoBehaviour {
             }
         if (refresh) refreshMonitor();
     }
+
     public void updateMonitor(KeyValuePair<string, string> dataPoint) {
         if (checkForKey(dataPoint)) refreshMonitor();
     }
+
     private bool checkForKey(KeyValuePair<string, string> dataPoint) {
         if (!currentMonitorData.Keys.Contains<string>(dataPoint.Key)) {
             currentMonitorData.Add(dataPoint.Key, dataPoint.Value);
@@ -173,37 +178,39 @@ public class SerialMonitor : MonoBehaviour {
         }
         return false;
     }
+
     public void refreshMonitor() {
-        portDataComponent.text = "";
-        portDataComponent.color = Color.white;
-        foreach (string key in currentMonitorData.Keys) {
-            portDataComponent.text += key.ToUpper() + ": " + currentMonitorData[key] + "\n";
-        }
-    }
-
-    public void refreshMonitor(Dictionary<string, object> data) {
         monitorDataComponent.text = "";
-        displayDictionaryData(data, "");
-    }
-
-    private void displayDictionaryData(Dictionary<string, object> dictionary, string prefix) {
-        foreach (var kvp in dictionary) {
-            if (kvp.Value is Dictionary<string, object> nestedDict) {
-                displayDictionaryData(nestedDict, prefix + kvp.Key + ".");
-            } else if (kvp.Value is List<object> nestedList) {
-                for(int i = 0; i < nestedList.Count; i++) {
-                    if(kvp.Value is Dictionary<string, object> yetAnotherNestedDict) {
-                        displayDictionaryData(yetAnotherNestedDict, prefix + kvp.Key + ".");
-                    } else {
-                        print("got here");
-                        monitorDataComponent.text += (prefix + kvp.Key).ToUpper() + ": " + kvp.Value.ToString() + "\n";
-                    }
-                }
-            } else {
-                monitorDataComponent.text += (prefix + kvp.Key).ToUpper() + ": " + kvp.Value + "\n";
-            }
+        foreach (string key in currentMonitorData.Keys) {
+            if (key == "port") continue;
+            monitorDataComponent.text += key.ToUpper() + ": " + currentMonitorData[key] + "\n";
         }
     }
+
+    //public void refreshMonitor(Dictionary<string, object> data) {
+    //    monitorDataComponent.text = "";
+    //    displayDictionaryData(data, "");
+    //}
+
+    //private void displayDictionaryData(Dictionary<string, object> dictionary, string prefix) {
+    //    foreach (var kvp in dictionary) {
+    //        if (kvp.Value is Dictionary<string, object> nestedDict) {
+    //            displayDictionaryData(nestedDict, prefix + kvp.Key + ".");
+    //        } else if (kvp.Value is List<object> nestedList) {
+    //            for(int i = 0; i < nestedList.Count; i++) {
+    //                if(kvp.Value is Dictionary<string, object> yetAnotherNestedDict) {
+    //                    displayDictionaryData(yetAnotherNestedDict, prefix + kvp.Key + ".");
+    //                } else {
+    //                    monitorDataComponent.text += (prefix + kvp.Key).ToUpper() + ": " + kvp.Value.ToString() + "\n";
+    //                    currentMonitorData[kvp.Key] = kvp.Value.ToString();
+    //                }
+    //            }
+    //        } else {
+    //            monitorDataComponent.text += (prefix + kvp.Key).ToUpper() + ": " + kvp.Value + "\n";
+    //            currentMonitorData[kvp.Key] = kvp.Value.ToString();
+    //        }
+    //    }
+    //}
 
 }
 

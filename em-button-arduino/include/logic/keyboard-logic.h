@@ -57,7 +57,7 @@ class KeyboardLogic {
         // print STP1.0 with data
         // Serial.println("STP1.0{\"status\":100,\"data\":{\"message\":\"Pressed key" + String(indexOfPressed) + "\",\"keyId\":" + String(filter.emb->keyData.actions[indexOfPressed].keyId) + ",\"timesPressed\":" + String(keyBlock.timesPressed) + ",\"actionId\":" + String(filter.emb->keyData.actions[indexOfPressed].actionId) + ",\"activationPoint\":" + String(filter.emb->keyData.actions[indexOfPressed].activation_point) + ",\"timeWhenPressed\":" + String(millis()) + "}}");
         // use STP::createResponse
-        String keys[5] = {"keyId", "actionId", "activationPoint", "timesPressed", "timeWhenPressed"};
+        String keys[5] = {"keyId", "actionId", "activation_point", "times_pressed", "time_when_pressed"};
         String values[5] = {String(filter.emb->keyData.actions[indexOfPressed].keyId), String(filter.emb->keyData.actions[indexOfPressed].actionId), String(filter.emb->keyData.actions[indexOfPressed].activation_point), String(keyBlock.timesPressed), String(millis())};
         Serial.println(STP::createResponse(100, "Pressed key" + String(indexOfPressed), keys, values, 5));
         keyBlock.keyLock = 1;
