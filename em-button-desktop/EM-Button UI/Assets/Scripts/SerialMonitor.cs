@@ -116,7 +116,7 @@ public class SerialMonitor : MonoBehaviour {
         }
         if (_latestLogVal.Length > 1 && _latestLogVal.StartsWith("STP1.0")) {
             logs.Add(Time.time, _latestLogVal);
-            //print(_latestLogVal);
+            print(_latestLogVal);
         }
     }
 

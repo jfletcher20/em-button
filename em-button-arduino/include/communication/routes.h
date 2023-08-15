@@ -21,7 +21,7 @@ const String routes[] = {
     "/device/enable/",
     "/device/disable/",
     "/device/data/",
-    "/device/save",
+    "/device/save/",
     "/device/electromagnet/",
     "/device/electromagnet/power/",
     "/device/hallsensor/",

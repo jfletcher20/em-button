@@ -29,7 +29,7 @@ class EmbServer {
             STPMethod req = method(json);
             switch(req) {
                 default:
-                    Serial.println(STP::createResponse(200, "To send requests, make sure to include the \"STP1.0\" prefix followed by JSON data. To parse responses, be sure to remove it by parsing from the index of the first \"{\". To see routes available, access \"/device/routes/\". To see this message, access \"/\"."));
+                    Serial.println(STP::createResponse(200, "To send requests, make sure to include the 'STP1.0' prefix followed by JSON data. To parse responses, be sure to remove it by parsing from the index of the first \"{\". To see routes available, access '/device/routes/'. To see this message, access '/'."));
             }
         }
 
@@ -47,7 +47,19 @@ class EmbServer {
         void dbRouteManager(DynamicJsonDocument json) {
             STPMethod req = method(json);
             stp.requestLogic(req, json);
-            Serial.println(STP::createResponse(200, "Accessed database route successfully"));
+            int statusCode;
+            switch(req) {
+                case STPMethod::GET:
+                    statusCode = 200;
+                    break;
+                case STPMethod::POST:
+                    statusCode = 201;
+                    break;
+                default:
+                    statusCode = 204;
+                    break;
+            }
+            Serial.println(STP::createResponse(statusCode, "Accessed database route successfully"));
         }
 
         void getCalibrateRoute() {
@@ -58,10 +70,10 @@ class EmbServer {
         void putEnableDisableRoute(bool enable) {
             if(enable) {
                 *enableDevice = true;
-                Serial.println(STP::createResponse(200, "Device enabled"));
+                Serial.println(STP::createResponse(204, "Device enabled", "enabled", "true"));
             } else {
                 *enableDevice = false;
-                Serial.println(STP::createResponse(200, "Device disabled"));
+                Serial.println(STP::createResponse(204, "Device disabled", "enabled", "false"));
             }
         }
 
@@ -74,7 +86,7 @@ class EmbServer {
         }
 
         void putElectromagnetDataRoute(DynamicJsonDocument json) {
-            Serial.println(STP::createResponse(200, "Updating electromagnet power from " + String(filter->emb->keyData.electromagnet_power), "electromagnet_power", String(json["electromagnet_power"].as<double>())));
+            Serial.println(STP::createResponse(204, "Updating electromagnet power from " + String(filter->emb->keyData.electromagnet_power), "electromagnet_power", String(json["electromagnet_power"].as<double>())));
             filter->emb->keyData.electromagnet_power = constrain(json["electromagnet_power"].as<double>(), 0, 1);
             stp.database->add(this->filter->emb->keyData, true);
             calibrateFilter();
@@ -92,6 +104,7 @@ class EmbServer {
             this->filter->emb->keyData = stp.embFromJson(json);
             stp.database->add(this->filter->emb->keyData, true);
             calibrateFilter();
+            Serial.println(STP::createResponse(204, "Updated emb data", "data", displayManager->getJson().c_str()));
         }
     public:
         HallFilter* filter;

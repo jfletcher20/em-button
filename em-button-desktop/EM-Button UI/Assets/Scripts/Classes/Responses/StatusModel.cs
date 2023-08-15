@@ -4,8 +4,8 @@
 /// Response when it pertains to device status (all OLED Monitor data and more).
 /// </summary>
 [System.Serializable]
-public class STPDeviceStatusResponseModel : STPResponseModel {
-    public new STPDeviceStatusDataModel data;
+public class DeviceStatusResponseModel : STPResponseModel {
+    public new StatusDataModel data;
     public override Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object>();
         result.Add("status", status);
@@ -13,9 +13,10 @@ public class STPDeviceStatusResponseModel : STPResponseModel {
         return result;
     }
 }
+
 [System.Serializable]
-public class STPDeviceStatusDataModel : STPDataModel {
-    public STPDeviceStateData current_state;
+public class StatusDataModel : STPDataModel {
+    public StatusData current_state;
     public override Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object>();
         result.Add("message", message);
@@ -23,6 +24,7 @@ public class STPDeviceStatusDataModel : STPDataModel {
         return result;
     }
 }
+
 [System.Serializable]
 public class EmbActionData {
     public int actionId, keyId;
@@ -37,7 +39,7 @@ public class EmbActionData {
 }
 
 [System.Serializable]
-public class STPDeviceStateData {
+public class StatusData {
     public int id, electromagnet_pin, hall_sensor_pin;
     public double electromagnet_power;
     public List<EmbActionData> actions;
@@ -73,6 +75,7 @@ public class STPDeviceStateData {
         foreach (EmbActionData action in actions) {
             actionsList.Add(actions.IndexOf(action), action.toDictionary());
         }
+
         result.Add("actions", actionsList);
 
         result.Add("current_value", current_value);
