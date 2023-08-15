@@ -34,14 +34,11 @@ public class SettingsTab : MonoBehaviour {
     }
 
     public void initRoutes(List<string> routes) {
-        // Destroy existing buttons
         clearChildren();
-
-        // Create new buttons for each route
         foreach (string route in routes) {
             Button button = Instantiate(routeButtonPrefab, routeNavigator.transform);
             TextMeshProUGUI text = button.GetComponentInChildren<TextMeshProUGUI>();
-            text.text = route; // Set button text to route name
+            _processRouteText(text, route);
             _routeColor(text, route);
             button.onClick.AddListener(() => _loadRoute(route));
         }
@@ -55,8 +52,28 @@ public class SettingsTab : MonoBehaviour {
         } else if (route.Contains("device")) {
             text.color = Color.blue;
         } else if (route.Contains("db")) {
+            text.color = Color.cyan;
+        } else if (route.Contains("enable")) {
             text.color = Color.green;
+        } else if (route.Contains("disable")) {
+            text.color = Color.red;
         }
+    }
+
+    private void _processRouteText(TextMeshProUGUI text, string route) {
+        void t(string val) { text.text = val; }
+        if (route.Equals("/")) t("Help");
+        if (route.Equals("/db/")) t("Database");
+        if (route.Equals("/device/routes/")) t("List routes");
+        if (route.Equals("/device/calibrate/")) t("Calibrate device");
+        if (route.Equals("/device/enable/")) t("Enable device");
+        if (route.Equals("/device/disable/")) t("Disable device");
+        if (route.Equals("/device/data/")) t("Get status");
+        if (route.Equals("/device/save/")) t("Edit settings");
+        if (route.Equals("/device/electromagnet/")) t("Get EM strength");
+        if (route.Equals("/device/electromagnet/power/")) t("Set EM strength");
+        if (route.Equals("/device/hallsensor/")) t("Get reading");
+        if (route.Equals("/device/hallsensor/normalized/")) t("Get normalized reading");
     }
 
     private void _loadRoute(string route) {

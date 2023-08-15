@@ -1339,6 +1339,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1652302098}
     m_Modifications:
+    - target: {fileID: 2147997648698261078, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: m_text
+      value: POST
+      objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 0
@@ -2695,6 +2699,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1652302098}
     m_Modifications:
+    - target: {fileID: 2147997648698261078, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: m_text
+      value: DELETE
+      objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 0
@@ -3456,6 +3464,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1652302098}
     m_Modifications:
+    - target: {fileID: 2147997648698261078, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: m_text
+      value: PUT
+      objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 1
@@ -5864,6 +5876,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1652302098}
     m_Modifications:
+    - target: {fileID: 2147997648698261078, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: m_text
+      value: GET
+      objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 0.1882353
