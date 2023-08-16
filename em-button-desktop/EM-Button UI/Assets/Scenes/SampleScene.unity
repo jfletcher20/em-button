@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 5083360}
   - component: {fileID: 5083359}
   m_Layer: 5
-  m_Name: Settings button label
+  m_Name: API button label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Settings
+  m_text: Access API
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -483,6 +483,7 @@ MonoBehaviour:
   settingsMenu: {fileID: 241686644}
   routeNavigator: {fileID: 1107055088}
   routeSelectablePrefab: {fileID: 4866482928589488071, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+  embModelClickInteractions: {fileID: 919132148809681191}
 --- !u!114 &88241154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1427,6 +1428,66 @@ RectTransform:
   m_AnchoredPosition: {x: -20, y: 0}
   m_SizeDelta: {x: 860, y: 564}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &635869384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 635869385}
+  - component: {fileID: 635869387}
+  - component: {fileID: 635869386}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &635869385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635869384}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 543450653012333470}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &635869386
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635869384}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5267177056413388226, guid: b7831783052097d418e48431e81db4ad, type: 3}
+--- !u!114 &635869387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635869384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 093de793f9eb6b543b6c15c364f87d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &651355801
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1437,6 +1498,10 @@ PrefabInstance:
     - target: {fileID: 2147997648698261078, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: m_text
       value: POST
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: isEnabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
@@ -1478,6 +1543,10 @@ PrefabInstance:
       propertyPath: normalColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: selectionManager
+      value: 
+      objectReference: {fileID: 88241155}
     - target: {fileID: 4866482928589488071, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: m_Name
       value: PostMethod
@@ -1656,7 +1725,7 @@ GameObject:
   - component: {fileID: 695333507}
   - component: {fileID: 695333506}
   m_Layer: 5
-  m_Name: Settings button
+  m_Name: API button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2779,6 +2848,10 @@ PrefabInstance:
       value: DELETE
       objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: isEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -2818,6 +2891,10 @@ PrefabInstance:
       propertyPath: normalColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: selectionManager
+      value: 
+      objectReference: {fileID: 88241155}
     - target: {fileID: 4866482928589488071, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: m_Name
       value: DeleteMethod
@@ -3279,7 +3356,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148809681188}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ac572a989084274d88903ad5f8553b0, type: 3}
   m_Name: 
@@ -3629,14 +3706,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1628148624}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -36.441208, y: 162.05186, z: 282.0243}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalRotation: {x: 0.2588186, y: -0, z: -0, w: 0.965926}
+  m_LocalPosition: {x: 144, y: -64, z: 152}
+  m_LocalScale: {x: 1180.7999, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1355911076}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!1 &1652302097
 GameObject:
   m_ObjectHideFlags: 0
@@ -3751,6 +3828,10 @@ PrefabInstance:
       value: PUT
       objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: isEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 1
       objectReference: {fileID: 0}
@@ -3790,6 +3871,10 @@ PrefabInstance:
       propertyPath: normalColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: selectionManager
+      value: 
+      objectReference: {fileID: 88241155}
     - target: {fileID: 4866482928589488071, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: m_Name
       value: PutMethod
@@ -4545,7 +4630,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148809681188}
-  m_LocalRotation: {x: 0.71507597, y: -0.5346292, z: -0.33824623, w: 0.29736748}
+  m_LocalRotation: {x: 0.715076, y: -0.5346293, z: -0.33824617, w: 0.29736745}
   m_LocalPosition: {x: 25, y: 25.5, z: 19.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4553,9 +4638,9 @@ Transform:
   - {fileID: 691305749}
   - {fileID: 8108517820920045683}
   - {fileID: 586646021}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 635869385}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 3.647, y: -126.55, z: -104.596}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &587942392335564704
 Transform:
   m_ObjectHideFlags: 0
@@ -4722,6 +4807,7 @@ MonoBehaviour:
   animators:
   - {fileID: 919132148809681189}
   - {fileID: 1335782075}
+  disabled: 0
 --- !u!64 &919132148809681192
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4733,7 +4819,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5267177056413388226, guid: b7831783052097d418e48431e81db4ad, type: 3}
 --- !u!64 &919132148809681193
@@ -4747,7 +4833,7 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6246166447782782087, guid: b7831783052097d418e48431e81db4ad, type: 3}
 --- !u!4 &1071091169284987716
@@ -5849,6 +5935,10 @@ PrefabInstance:
       value: GET
       objectReference: {fileID: 0}
     - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: isSelected
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: clickColor.b
       value: 0
       objectReference: {fileID: 0}
@@ -5888,6 +5978,10 @@ PrefabInstance:
       propertyPath: normalColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4866482928589488070, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
+      propertyPath: selectionManager
+      value: 
+      objectReference: {fileID: 88241155}
     - target: {fileID: 4866482928589488071, guid: 8ca65e6acbb25f947b8c14c2b2b7ff74, type: 3}
       propertyPath: m_Name
       value: GetMethod

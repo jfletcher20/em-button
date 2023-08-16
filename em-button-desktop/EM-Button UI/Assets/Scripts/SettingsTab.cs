@@ -14,6 +14,8 @@ public class SettingsTab : MonoBehaviour {
     public GameObject routeNavigator;
     public GameObject routeSelectablePrefab;
 
+    public MouseInteractions embModelClickInteractions;
+
     private void Awake() {
         settingsMenuAnimator = settingsMenu.GetComponent<Animator>();
         clearChildren();
@@ -27,6 +29,7 @@ public class SettingsTab : MonoBehaviour {
 
     void animateSettingsMenu() {
         settingsMenuAnimator.SetBool("enabled", !settingsMenuAnimator.GetBool("enabled"));
+        embModelClickInteractions.disabled = !embModelClickInteractions.disabled;
     }
 
     private bool _initRoutes = true;
@@ -48,8 +51,7 @@ public class SettingsTab : MonoBehaviour {
 
     private void _loadRoute(RouteManagement.STPRouteDetails route) {
         STPCommand command = new STPCommand { route = route.path, method = route.method };
-        // TODO: maybe implement route struct which contains all route info - color, text, viable methods and necessary data
-        if(route.validate(command))
+        if (route.validate(command))
             serialMonitor.sendCommand(command);
     }
 

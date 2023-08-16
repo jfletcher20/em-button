@@ -68,19 +68,19 @@ public class RouteManagement {
 
         _savedRoutes = new List<STPRouteDetails>();
 
-        _savedRoutes.Add(STPRouteDetails.from("Help", "/", STPMethod.GET));
+        _savedRoutes.Add(STPRouteDetails.from("API Help", "/", STPMethod.GET));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.GET, db_post_put_or_save_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.POST, db_post_put_or_save_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.PUT, db_post_put_or_save_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.DELETE, db_delete_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("List routes", "/device/routes/", STPMethod.GET));
-        _savedRoutes.Add(STPRouteDetails.from("Calibrate device", "/device/calibrate/", STPMethod.GET));
+        _savedRoutes.Add(STPRouteDetails.from("Calibrate device", "/device/calibrate/", STPMethod.GET, null, Color.magenta));
         _savedRoutes.Add(STPRouteDetails.from("Enable device", "/device/enable/", STPMethod.PUT, null, Color.blue));
         _savedRoutes.Add(STPRouteDetails.from("Disable device", "/device/disable/", STPMethod.PUT, null, Color.blue));
         _savedRoutes.Add(STPRouteDetails.from("Get status", "/device/data/", STPMethod.GET));
-        _savedRoutes.Add(STPRouteDetails.from("Edit settings", "/device/save/", STPMethod.POST, db_post_put_or_save_data, Color.magenta));
+        _savedRoutes.Add(STPRouteDetails.from("Edit settings", "/device/save/", STPMethod.POST, db_post_put_or_save_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Get EM strength", "/device/electromagnet/", STPMethod.GET));
-        _savedRoutes.Add(STPRouteDetails.from("Set EM strength", "/device/electromagnet/power/", STPMethod.PUT, electromagnet_power_data, Color.magenta));
+        _savedRoutes.Add(STPRouteDetails.from("Set EM strength", "/device/electromagnet/power/", STPMethod.PUT, electromagnet_power_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Get reading", "/device/hallsensor/", STPMethod.GET));
         _savedRoutes.Add(STPRouteDetails.from("Get normalized reading", "/device/hallsensor/normalized/", STPMethod.GET));
 
