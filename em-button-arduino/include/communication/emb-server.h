@@ -176,27 +176,29 @@ class EmbServer {
         }
 
         void handleRequest(String route, DynamicJsonDocument json) {
-            if (String(route) == getRouteByKey(Routes::ROOT)) {
+            if (String(route) == getRouteByKey(Routes::ROOT) && method(json) == STPMethod::GET) {
                 getRootRoute(json);
-            } else if (String(route) == getRouteByKey(Routes::ROUTES)) {
+            } else if (String(route) == getRouteByKey(Routes::ROUTES) && method(json) == STPMethod::GET) {
                 getRoutesRoute();
             } else if (String(route) == getRouteByKey(Routes::DB)) {
                 dbRouteManager(json);
-            } else if (String(route) == getRouteByKey(Routes::CALIBRATE)) {
+            } else if (String(route) == getRouteByKey(Routes::CALIBRATE) && method(json) == STPMethod::GET) {
                 getCalibrateRoute();
             } else if (String(route) == getRouteByKey(Routes::ENABLE) && method(json) == STPMethod::PUT) {
                 putEnableDisableRoute(true);
             } else if (String(route) == getRouteByKey(Routes::DISABLE) && method(json) == STPMethod::PUT) {
                 putEnableDisableRoute(false);
-            } else if (String(route) == getRouteByKey(Routes::DATA)) {
+            } else if (String(route) == getRouteByKey(Routes::DATA) && method(json) == STPMethod::GET) {
                 getDataRoute();
-            } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET)) {
+            } else if (String(route) == getRouteByKey(Routes::SAVE) && method(json) == STPMethod::PUT) {
+                putEmbDataRoute(json);
+            } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET) && method(json) == STPMethod::GET) {
                 getElectromagnetDataRoute();
             } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET_POWER) && method(json) == STPMethod::PUT) {
                 putElectromagnetDataRoute(json);
-            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR)) {
+            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR) && method(json) == STPMethod::GET) {
                 getHallSensorDataRoute();
-            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR_NORMALIZED)) {
+            } else if (String(route) == getRouteByKey(Routes::HALLSENSOR_NORMALIZED) && method(json) == STPMethod::GET) {
                 getHallSensorDataNormalizedRoute();
             } else {
                 Serial.println(STP::createResponse(404, "Route not found"));

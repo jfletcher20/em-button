@@ -41,11 +41,11 @@ public class MonitorEvents : MonoBehaviour {
             Dictionary<string, object> dataToDisplay = new Dictionary<string, object>();
             dataToDisplay.Add("Device is on", deviceEnabled.data.enabled);
             return dataToDisplay;
-        } else if (latest.Contains("routes")) {
+        } /*else if (latest.Contains("routes")) {
             RoutesResponseModel deviceEnabled = routesFromJson(latest);
-            gameObject.GetComponent<SettingsTab>().initRoutes(deviceEnabled.data.routes);
+            gameObject.GetComponent<SettingsTab>().initRoutes();
             return empty;
-        } else {
+        }*/ else {
             return empty;
         }
     }

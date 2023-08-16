@@ -14,16 +14,16 @@ enum Routes {
 };
 
 const String routes[] = {
-    "/",
-    "/db/",
-    "/device/routes/",
-    "/device/calibrate/",
-    "/device/enable/",
-    "/device/disable/",
-    "/device/data/",
-    "/device/save/",
-    "/device/electromagnet/",
-    "/device/electromagnet/power/",
-    "/device/hallsensor/",
-    "/device/hallsensor/normalized/",
+    "/", // GET
+    "/db/", // GET, POST, PUT, DELETE
+    "/device/routes/", // GET
+    "/device/calibrate/", // GET
+    "/device/enable/", // PUT
+    "/device/disable/", // PUT
+    "/device/data/", // GET
+    "/device/save/", // POST
+    "/device/electromagnet/", // GET
+    "/device/electromagnet/power/", // PUT
+    "/device/hallsensor/", // GET
+    "/device/hallsensor/normalized/", // GET
 }; // example: STP1.0{"route":"/db/","method":"get"}

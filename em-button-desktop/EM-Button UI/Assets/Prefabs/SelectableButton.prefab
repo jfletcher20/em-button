@@ -90,10 +90,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661db913d95a3184dbf010eec4a55ab5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0.6862745}
+  normalColor: {r: 0.7216981, g: 1, b: 0.93585765, a: 0.6862745}
   hoverColor: {r: 0.6415094, g: 0.6415094, b: 0.6415094, a: 1}
   clickColor: {r: 1, g: 1, b: 1, a: 1}
-  methodManager: {fileID: 0}
+  isSelected: 0
+  isEnabled: 1
+  selectionManager: {fileID: 0}
 --- !u!1 &7454357485479904901
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +195,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
