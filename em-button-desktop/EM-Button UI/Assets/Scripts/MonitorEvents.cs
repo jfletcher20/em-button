@@ -40,6 +40,7 @@ public class MonitorEvents : MonoBehaviour {
 
     Dictionary<string, object> statusUpdate(string latest) {
         var deviceStatus = statusFromJson(latest);
+        if (latest.Contains("\"ble_connected\":true")) deviceStatus.data.current_state.ble_connected = true;
         Dictionary<string, object> dataToDisplay = new Dictionary<string, object>();
         dataToDisplay.Add("Device is on", deviceStatus.data.current_state.device_enabled);
         dataToDisplay.Add("Bluetooth connected", deviceStatus.data.current_state.ble_connected);
@@ -60,9 +61,10 @@ public class MonitorEvents : MonoBehaviour {
     }
 
     public Dictionary<string, object> bleConnectionUpdate(string latest) {
-        BleConnectionDataModel bleConnected = bleConnectionFromJson(latest);
+        STPBleConnectionResponseModel bleConnected = bleConnectionFromJson(latest);
+        if (latest.Contains("\"ble_connected\":true")) bleConnected.data.ble_connected = true;
         Dictionary<string, object> dataToDisplay = new Dictionary<string, object>();
-        dataToDisplay.Add("Bluetooth connected", bleConnected.ble_connected);
+        dataToDisplay.Add("Bluetooth connected", bleConnected.data.ble_connected);
         return dataToDisplay;
     }
 
@@ -103,7 +105,7 @@ public class MonitorEvents : MonoBehaviour {
 
     private DeviceStatusResponseModel statusFromJson(string json) => JsonUtility.FromJson<DeviceStatusResponseModel>(json);
     private KeyPressResponseModel keyPressFromJson(string json) => JsonUtility.FromJson<KeyPressResponseModel>(json);
-    private BleConnectionDataModel bleConnectionFromJson(string json) => JsonUtility.FromJson<BleConnectionDataModel>(json);
+    private STPBleConnectionResponseModel bleConnectionFromJson(string json) => JsonUtility.FromJson<STPBleConnectionResponseModel>(json);
     private EnabledResponseModel enabledFromJson(string json) => JsonUtility.FromJson<EnabledResponseModel>(json);
     private RoutesResponseModel routesFromJson(string json) => JsonUtility.FromJson<RoutesResponseModel>(json);
 }
