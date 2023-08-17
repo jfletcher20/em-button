@@ -14,15 +14,27 @@ public struct STPCommand {
     private string apiMethod { get { return "\"method\":\"" + method.ToString() + "\""; } }
     private string apiData {
         get {
-            if(data == null) {
+            if (data == null) {
                 data = new Dictionary<string, string>();
             }
             if (data.Count < 1) return "";
             string result = ",";
-            foreach (string key in data.Keys) result += "\"" + key + "\":\"" + data[key] + "\",";
-            return result.Substring(0, result.Length - 2);
+            foreach (string key in data.Keys) {
+                string value = data[key];
+                if (int.TryParse(value, out _)) {
+                    result += "\"" + key + "\":" + value + ",";
+                } else if (double.TryParse(value, out _)) {
+                    result += "\"" + key + "\":" + value + ",";
+                } else if (bool.TryParse(value, out _)) {
+                    result += "\"" + key + "\":" + value.ToLower() + ",";
+                } else {
+                    result += "\"" + key + "\":\"" + value + "\",";
+                }
+            }
+            return result.Substring(0, result.Length - 1);
         }
     }
+
 
     public static STPCommand from(string route, STPMethod method) {
         STPCommand command = new STPCommand();

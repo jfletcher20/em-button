@@ -82,6 +82,7 @@ public class SettingsTab : MonoBehaviour {
                 embFormParent.SetActive(true);
                 embFormFields[0].text = monitorEvents.embData.hall_sensor.ToString();
                 embFormFields[1].text = monitorEvents.embData.electromagnet.ToString();
+                embFormParent.GetComponentInChildren<Slider>().value = (float)monitorEvents.embData.electromagnet_power;
             } else if (route.method == STPMethod.DELETE) {
                 deletionConfirmationField.transform.parent.gameObject.SetActive(true);
             } else {
@@ -99,34 +100,58 @@ public class SettingsTab : MonoBehaviour {
     private void _loadRouteWithData() {
         RouteManagement.STPRouteDetails route = selectedRouteManager.getSelectedRoute();
         if (route.data == null) return;
-        List<string> keys = route.data.Keys.ToList();
-        STPCommand command = new STPCommand { route = route.path, method = route.method };
+        STPCommand command = new STPCommand { route = route.path, method = route.method, data = new Dictionary<string, string>() };
         switch (route.path) {
             case "/db/":
                 switch(route.method) {
                     case STPMethod.POST:
                     case STPMethod.PUT:
-                        for (int i = 0; i < keys.Count && i < embFormFields.Length - 1; i++) {
-                            print(keys[i] + ": " + i.ToString());
-                            command.data.Add(keys[i], embFormFields[i].text);
-                        }
+                        command.data = _getEmbDataFromForm();
                         break;
                     case STPMethod.DELETE:
-                        command.data.Add(keys.First(), deletionConfirmationField.text);
+                        if (!_confirmDeletion()) return;
+                        command.data = _getDeletionDataFromForm();
                         break;
                 }
                 break;
             case "/device/save":
                 if (route.method == STPMethod.PUT)
-                    for (int i = 0; i < keys.Count && i < embFormFields.Length; i++)
-                        command.data.Add(keys[i], embFormFields[i].text);
+                    command.data = _getEmbDataFromForm();
+                print("loaded save route");
                 break;
             case "/device/electromagnet/power/":
                 if (route.method == STPMethod.PUT)
-                    command.data.Add(keys.First(), ((int)(emPowerForm.GetComponent<Slider>().value * 255)).ToString());
+                    command.data = _getEmDataFromForm();
                 break;
         }
         _hideDataForm();
+        Debug.LogError(command.ToString());
+    }
+
+    private bool _confirmDeletion() {
+        return deletionConfirmationField.text.ToLower().Equals("yes");
+    }
+
+    private Dictionary<string, string> _getDeletionDataFromForm() {
+        return new Dictionary<string, string> {
+            { "id", monitorEvents.embData.id.ToString() }
+        };
+    }
+
+    private Dictionary<string, string> _getEmDataFromForm() {
+        return new Dictionary<string, string> {
+            { "electromagnet_power", ((double)((int)(emPowerForm.GetComponentInChildren<Slider>().value * 100)) / 100).ToString() }
+        };
+    }
+
+    private Dictionary<string, string> _getEmbDataFromForm() {
+        Dictionary<string, string> result = new Dictionary<string, string>();
+        result.Add("id", "0");
+        result.Add("hall_sensor", embFormFields[0].text);
+        result.Add("electromagnet", embFormFields[1].text);
+        result.Add("electromagnet_power", ((double)((int)(embFormParent.GetComponentInChildren<Slider>().value * 100)) / 100).ToString());
+        result.Add("actions", "[]");
+        return result;
     }
 
     public void clearChildren() {
