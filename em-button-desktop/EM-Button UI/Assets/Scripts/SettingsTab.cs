@@ -21,10 +21,10 @@ public class SettingsTab : MonoBehaviour {
     public GameObject routeNavigator;
     public GameObject routeSelectablePrefab;
 
+    public GameObject emPowerForm;
     public GameObject embFormParent;
     private TMP_InputField[] embFormFields;
-    private Slider embFormSlider;
-    public TMP_InputField singleInputField;
+    public TMP_InputField deletionConfirmationField;
 
     public MouseInteractions embModelClickInteractions;
 
@@ -37,7 +37,6 @@ public class SettingsTab : MonoBehaviour {
         settingsMenuAnimator = settingsMenu.GetComponent<Animator>();
         dataFormAnimator = dataForm.transform.parent.GetComponent<Animator>();
         embFormFields = embFormParent.GetComponentsInChildren<TMP_InputField>();
-        embFormSlider = embFormParent.GetComponentInChildren<Slider>();
         clearChildren();
     }
 
@@ -83,9 +82,11 @@ public class SettingsTab : MonoBehaviour {
                 embFormParent.SetActive(true);
                 embFormFields[0].text = monitorEvents.embData.hall_sensor.ToString();
                 embFormFields[1].text = monitorEvents.embData.electromagnet.ToString();
-                embFormSlider.value = (float)monitorEvents.embData.electromagnet_power;
+            } else if (route.method == STPMethod.DELETE) {
+                deletionConfirmationField.transform.parent.gameObject.SetActive(true);
             } else {
-                singleInputField.transform.parent.gameObject.SetActive(true);
+                emPowerForm.GetComponentInChildren<Slider>().value = (float)monitorEvents.embData.electromagnet_power;
+                emPowerForm.SetActive(true);
             }
         }
     }
@@ -111,7 +112,7 @@ public class SettingsTab : MonoBehaviour {
                         }
                         break;
                     case STPMethod.DELETE:
-                        command.data.Add(keys.First(), singleInputField.text);
+                        command.data.Add(keys.First(), deletionConfirmationField.text);
                         break;
                 }
                 break;
@@ -122,7 +123,7 @@ public class SettingsTab : MonoBehaviour {
                 break;
             case "/device/electromagnet/power/":
                 if (route.method == STPMethod.PUT)
-                    command.data.Add(keys.First(), singleInputField.text);
+                    command.data.Add(keys.First(), ((int)(emPowerForm.GetComponent<Slider>().value * 255)).ToString());
                 break;
         }
         _hideDataForm();
