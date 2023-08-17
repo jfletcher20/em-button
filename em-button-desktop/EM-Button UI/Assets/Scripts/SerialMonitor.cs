@@ -39,7 +39,6 @@ public class SerialMonitor : MonoBehaviour {
 
     PortDescription findSerialPort() => SerialPortStream.GetPortDescriptions().FirstOrDefault(p => p.Description.Contains(deviceName));
 
-
     private string _portNotFound = "Port not found. Please plug in the device.";
     public void openPort(PortDescription discoveredPort) {
         port = new SerialPort(discoveredPort.Port, baudRate);
@@ -121,12 +120,14 @@ public class SerialMonitor : MonoBehaviour {
     }
 
     public void sendCommand(STPCommand command) {
-        if(!port.IsOpen) {
-            try {
+        try {
+            if (!port.IsOpen) {
                 port.Open();
-            } catch { }
         } else
             port.Write(command.ToString());
+        } catch {
+            Debug.LogWarning("Failed to send command. Is the port initialized and open?");
+        }
     }
 
     public KeyValuePair<float, string> read() => log;

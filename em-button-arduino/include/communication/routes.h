@@ -21,7 +21,7 @@ const String routes[] = {
     "/device/enable/", // PUT
     "/device/disable/", // PUT
     "/device/data/", // GET
-    "/device/save/", // POST
+    "/device/save/", // PUT
     "/device/electromagnet/", // GET
     "/device/electromagnet/power/", // PUT
     "/device/hallsensor/", // GET

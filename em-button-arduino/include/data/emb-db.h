@@ -121,7 +121,7 @@ class EmbButtonDB {
     template <typename T>
     bool exists(String key, T value) {
       if(!SPIFFS.exists(this->file)) {
-        Serial.println("File does not exist");
+        Serial.println(STP2::createResponse(404, "File does not exist"));
         return false;
       }
 
@@ -153,7 +153,7 @@ class EmbButtonDB {
         return;
       }
       SPIFFS.remove(this->file);
-      Serial.println("Database cleared");
+        Serial.println(STP2::createResponse(200, "Database was cleared."));
       file.close();
     }
 
@@ -228,7 +228,7 @@ class EmbButtonDB {
 
       File inFile = SPIFFS.open(this->file, "r");
       if(!inFile) {
-        Serial.println(STP2::createResponse(500, "Failed to open input file for reading (revmoing record)"));
+        Serial.println(STP2::createResponse(500, "Failed to open input file for reading (removing record)"));
         return false;
       }
 

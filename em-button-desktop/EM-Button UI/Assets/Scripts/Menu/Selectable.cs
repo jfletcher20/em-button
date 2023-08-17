@@ -11,7 +11,6 @@ public class Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool isSelected = false, isEnabled = true;
     public ISelect selectionManager;
 
-
     private void Awake() {
         image = GetComponent<Image>();
     }

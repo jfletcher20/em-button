@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SelectedRouteManager : ISelect {
-    
+
     public void Initialize(List<Selectable> routeObjects) {
         selectableObjects = routeObjects;
         foreach (Selectable route in routeObjects) {
@@ -23,8 +24,14 @@ public class SelectedRouteManager : ISelect {
                 GetComponent<SelectedMethodManager>().DisableExcept(viableMethods);
             } else {
                 route.Deselect();
+                HideDataForm();
             }
         }
+    }
+
+    public void HideDataForm() {
+        additionalDataForm.GetComponent<Animator>().SetBool("enabled", false);
+        GetComponent<SettingsTab>().sendCommandButton.enabled = true;
     }
 
     /// <summary>
@@ -36,6 +43,7 @@ public class SelectedRouteManager : ISelect {
             if (!routes.Contains(routeObjectToRouteDetails(route))) {
                 if (route.isSelected) route.Deselect();
                 route.Disable();
+                HideDataForm();
             } else {
                 route.Enable();
             }
@@ -50,6 +58,9 @@ public class SelectedRouteManager : ISelect {
     }
 
     public RouteManagement.STPRouteDetails getSelectedRoute() {
-        return RouteManagement.routesList[selectableObjects.IndexOf(selectableObjects.Find((r) => r.isSelected))];
+        RouteManagement.STPRouteDetails route = RouteManagement.routesListNoDuplicates[selectableObjects.IndexOf(selectableObjects.Find((r) => r.isSelected))];
+        route.method = GetComponent<SelectedMethodManager>().getSelectedMethod();
+        route = RouteManagement.routesList.Where((r) => r.path == route.path && r.method == route.method).FirstOrDefault();
+        return route;
     }
 }

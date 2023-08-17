@@ -26,23 +26,10 @@ public class StatusDataModel : STPDataModel {
 }
 
 [System.Serializable]
-public class EmbActionData {
-    public int actionId, keyId;
-    public double activation_point;
-    public Dictionary<string, object> toDictionary() {
-        Dictionary<string, object> result = new Dictionary<string, object>();
-        result.Add("actionId", actionId);
-        result.Add("keyId", keyId);
-        result.Add("activation_point", activation_point);
-        return result;
-    }
-}
-
-[System.Serializable]
 public class StatusData {
     public int id, electromagnet_pin, hall_sensor_pin;
     public double electromagnet_power;
-    public List<EmbActionData> actions;
+    public List<EmbAction> actions;
     public int current_value;
     public int value_normalized;
     public int times_pressed;
@@ -72,7 +59,7 @@ public class StatusData {
         result.Add("electromagnet_power", electromagnet_power);
 
         Dictionary<int, Dictionary<string, object>> actionsList = new Dictionary<int, Dictionary<string, object>>();
-        foreach (EmbActionData action in actions) {
+        foreach (EmbAction action in actions) {
             actionsList.Add(actions.IndexOf(action), action.toDictionary());
         }
 

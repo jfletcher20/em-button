@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class SelectedMethodManager : ISelect {
+
     private List<STPMethod> methods = new List<STPMethod>{ STPMethod.GET, STPMethod.POST, STPMethod.PUT, STPMethod.DELETE };
 
     private void Start() {
@@ -17,6 +18,7 @@ public class SelectedMethodManager : ISelect {
                 method.Select();
             } else {
                 method.Deselect();
+                GetComponent<SelectedRouteManager>().HideDataForm();
             }
         }
     }
@@ -30,6 +32,7 @@ public class SelectedMethodManager : ISelect {
             if(!methods.Contains(methodObjectToMethod(method))) {
                 method.Deselect();
                 method.Disable();
+                GetComponent<SelectedRouteManager>().HideDataForm();
             } else {
                 method.Enable();
             }

@@ -28,21 +28,21 @@ EmbAction* embActions(int id[3], int keyId[3], double activation_point[3]) {
     return embActions;
 }
 
+// hall sensor wire order:
+//      yellow | green | blue when hall sensor has back facing wires
+//      pin 13 |  gnd  |  vcc
 typedef int Pin;
 struct EmbButton {
     uint8_t id = 20;
-    // hall sensor wire order:
-    //      yellow | green | blue when hall sensor has back facing wires
-    //      pin 13 |  gnd  |  vcc
     Pin electromagnet = 13, hall_sensor = 4;
     double electromagnet_power = 1.0;
     EmbAction* actions = embActions(new int[3]{0, 1, 2}, new int[3]{'0', '1', '2'}, new double[3]{0.2, 0.5, 0.7});
 };
 
 struct Emb {
-    const char name[20] = "ESP32 Emb Keyboard";
+    const char name[20] = "EM Button";
     const char manufacturer[20] = "IoT Lab, FOI";
-    const char version[10] = "v0.3.5";
+    const char version[10] = "v0.5.2";
     BleKeyboard keyboard = BleKeyboard(name, manufacturer, 100);
     EmbConnectionState connectionStatus;
     EmbButton keyData;

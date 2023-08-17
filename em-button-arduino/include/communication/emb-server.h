@@ -104,7 +104,7 @@ class EmbServer {
             this->filter->emb->keyData = stp.embFromJson(json);
             stp.database->add(this->filter->emb->keyData, true);
             calibrateFilter();
-            Serial.println(STP::createResponse(204, "Updated emb data", "data", displayManager->getJson().c_str()));
+            Serial.println(STP::createResponse(204, "Updated emb data and reloaded data", "data", displayManager->getJson().c_str()));
         }
     public:
         HallFilter* filter;
