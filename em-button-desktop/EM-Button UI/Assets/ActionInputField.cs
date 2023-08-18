@@ -10,7 +10,7 @@ public class ActionInputField : MonoBehaviour {
     private Button duplicateButton, deleteButton;
     private TMP_InputField key;
     private Slider slider;
-
+    private ActionsListForm actionsListForm;
     private void Awake() {
         action.actionId = transform.parent.GetSiblingIndex();
         Button[] buttons = GetComponentsInChildren<Button>();
@@ -18,10 +18,13 @@ public class ActionInputField : MonoBehaviour {
         deleteButton = buttons[1];
         key = GetComponentInChildren<TMP_InputField>();
         slider = GetComponentInChildren<Slider>();
+        actionsListForm = GetComponentInParent<ActionsListForm>();
         duplicateButton.onClick.AddListener(DuplicateAction);
         deleteButton.onClick.AddListener(DeleteAction);
         key.onValueChanged.AddListener(OnKeyValueChanged);
         slider.onValueChanged.AddListener(OnSliderValueChanged);
+        action.keyId = 48;
+        action.activation_point = (float)((int)(slider.value * 100)) / 100;
     }
 
     private void OnKeyValueChanged(string newText) {
@@ -31,7 +34,7 @@ public class ActionInputField : MonoBehaviour {
     }
 
     private void OnSliderValueChanged(float newValue) {
-        action.activation_point = newValue;
+        action.activation_point = (float)((int)(newValue * 100)) / 100;
     }
 
     private void Update() {
@@ -47,6 +50,7 @@ public class ActionInputField : MonoBehaviour {
     private void DeleteAction() {
         Transform parentParent = transform.parent.parent;
         if (parentParent.childCount > 1) {
+            actionsListForm.embActions.Remove(action);
             Destroy(transform.parent.gameObject);
         } else {
             Debug.Log("Cannot delete the last child.");
@@ -58,6 +62,7 @@ public class ActionInputField : MonoBehaviour {
         bool disableButtons = parentParent.childCount >= 3;
         duplicateButton.enabled = !disableButtons;
         deleteButton.enabled = parentParent.childCount > 1;
+        action.actionId = transform.parent.GetSiblingIndex();
     }
 
 }

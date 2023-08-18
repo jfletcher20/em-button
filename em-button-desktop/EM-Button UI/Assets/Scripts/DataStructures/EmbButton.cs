@@ -2,7 +2,7 @@
 
 [System.Serializable]
 public class EmbButton {
-    public int id = 20;
+    public int id = 0;
     public int electromagnet = 13, hall_sensor = 4;
     public double electromagnet_power = 1.0;
     public List<EmbAction> actions = new List<EmbAction>(3);
@@ -22,8 +22,32 @@ public class EmbButton {
                 { "keyId", action.keyId },
                 { "activation_point", action.activation_point }
             };
-            ((List<object>)result["actions"]).Add(actions);
+            ((dynamic)result["actions"]).Add(actions);
         }
+
+        return result;
+    }
+
+    public Dictionary<string, string> toStringDictionary() {
+
+        Dictionary<string, string> result = new Dictionary<string, string> {
+            { "id", id.ToString() },
+            { "electromagnet_pin", electromagnet.ToString() },
+            { "hall_sensor_pin", hall_sensor.ToString() },
+            { "electromagnet_power", electromagnet_power.ToString() },
+            { "actions", "[" },
+        };
+
+        foreach (EmbAction action in actions) {
+            result["actions"] += "{\"id\":" + action.actionId + ","
+                + "\"keyId\":" + action.keyId.ToString() + ","
+                + "\"activation_point\":" + action.activation_point.ToString() + "},";
+        }
+
+        if(result["actions"].Length > 1)
+            result["actions"] = result["actions"].Substring(0, result["actions"].Length - 1);
+        
+        result["actions"] += "]";
 
         return result;
     }
@@ -58,7 +82,7 @@ public class EmbButton {
             string key = kvp.Key;
             object value = kvp.Value;
 
-            if (value is List<object> list) {
+            if (value is List<dynamic> list) {
                 List<string> listItems = new List<string>();
                 foreach (var listItem in list) {
                     if (listItem is Dictionary<string, object> listItemDict) {

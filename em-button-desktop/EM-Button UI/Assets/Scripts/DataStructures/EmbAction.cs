@@ -2,7 +2,7 @@
 
 [System.Serializable]
 public class EmbAction {
-    public int actionId, keyId;
+    public int actionId, keyId = '0';
     public double activation_point;
     public Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object>();

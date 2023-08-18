@@ -145,13 +145,16 @@ public class SettingsTab : MonoBehaviour {
     }
 
     private Dictionary<string, string> _getEmbDataFromForm() {
-        Dictionary<string, string> result = new Dictionary<string, string>();
-        result.Add("id", "0");
-        result.Add("hall_sensor", embFormFields[0].text);
-        result.Add("electromagnet", embFormFields[1].text);
-        result.Add("electromagnet_power", ((double)((int)(embFormParent.GetComponentInChildren<Slider>().value * 100)) / 100).ToString());
-        result.Add("actions", "[]");
-        return result;
+        double emPower = (double)((int)(embFormParent.GetComponentInChildren<Slider>().value * 100)) / 100;
+        List<EmbAction> embActions = settingsMenu.transform.parent.parent.GetComponentInChildren<ActionsListForm>().embActions;
+        EmbButton embButton = new EmbButton {
+            id = 0,
+            hall_sensor = embFormFields[0].text == "" ? 4 : int.Parse(embFormFields[0].text),
+            electromagnet = embFormFields[1].text == "" ? 13 : int.Parse(embFormFields[1].text),
+            electromagnet_power = emPower,
+            actions = embActions,
+        };
+        return embButton.toStringDictionary();
     }
 
     public void clearChildren() {

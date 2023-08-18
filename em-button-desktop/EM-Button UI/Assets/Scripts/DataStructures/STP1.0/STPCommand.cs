@@ -29,6 +29,8 @@ public struct STPCommand {
                     result += "\"" + key + "\":" + value.ToLower() + ",";
                 } else {
                     result += "\"" + key + "\":\"" + value + "\",";
+                    if (value.StartsWith("[{")) result = result.Replace("\"[{", "[{");
+                    if (value.EndsWith("}]")) result = result.Replace("}]\"", "}]");
                 }
             }
             return result.Substring(0, result.Length - 1);
