@@ -10,8 +10,8 @@ public class EmbButton {
     public Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object> {
             { "id", id },
-            { "electromagnet_pin", electromagnet },
-            { "hall_sensor_pin", hall_sensor },
+            { "electromagnet", electromagnet },
+            { "hall_sensor", hall_sensor },
             { "electromagnet_power", electromagnet_power },
             { "actions", new List<Dictionary<string, object>>() }
         };
@@ -32,8 +32,8 @@ public class EmbButton {
 
         Dictionary<string, string> result = new Dictionary<string, string> {
             { "id", id.ToString() },
-            { "electromagnet_pin", electromagnet.ToString() },
-            { "hall_sensor_pin", hall_sensor.ToString() },
+            { "electromagnet", electromagnet.ToString() },
+            { "hall_sensor", hall_sensor.ToString() },
             { "electromagnet_power", electromagnet_power.ToString() },
             { "actions", "[" },
         };
@@ -56,8 +56,8 @@ public class EmbButton {
         return new EmbButton {
             id = status.data.current_state.id,
             actions = status.data.current_state.actions,
-            electromagnet = status.data.current_state.electromagnet_pin,
-            hall_sensor = status.data.current_state.hall_sensor_pin,
+            electromagnet = status.data.current_state.electromagnet,
+            hall_sensor = status.data.current_state.hall_sensor,
             electromagnet_power = status.data.current_state.electromagnet_power,
         };
     }
@@ -65,8 +65,8 @@ public class EmbButton {
     public void update(DeviceStatusResponseModel status) {
         id = status.data.current_state.id;
         actions = status.data.current_state.actions;
-        electromagnet = status.data.current_state.electromagnet_pin;
-        hall_sensor = status.data.current_state.hall_sensor_pin;
+        electromagnet = status.data.current_state.electromagnet;
+        hall_sensor = status.data.current_state.hall_sensor;
         electromagnet_power = status.data.current_state.electromagnet_power;
     }
 

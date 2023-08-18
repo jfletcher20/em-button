@@ -79,8 +79,8 @@ class DisplayManager {
         std::string getJson() {
             DynamicJsonDocument doc(1024);
             doc["id"] = filter->emb->keyData.id;
-            doc["electromagnet_pin"] = filter->emb->keyData.electromagnet;
-            doc["hall_sensor_pin"] = filter->emb->keyData.hall_sensor;
+            doc["electromagnet"] = filter->emb->keyData.electromagnet;
+            doc["hall_sensor"] = filter->emb->keyData.hall_sensor;
             doc["electromagnet_power"] = filter->emb->keyData.electromagnet_power;
             JsonArray actions = doc.createNestedArray("actions");
             for(int i = 0; i < 3 && filter->emb->keyData.actions[i].actionId != -1; i++) {

@@ -27,7 +27,7 @@ public class StatusDataModel : STPDataModel {
 
 [System.Serializable]
 public class StatusData {
-    public int id, electromagnet_pin, hall_sensor_pin;
+    public int id, electromagnet, hall_sensor;
     public double electromagnet_power;
     public List<EmbAction> actions;
     public int current_value;
@@ -38,8 +38,8 @@ public class StatusData {
     public float time_when_retrieved;
     public enum Keys {
         id,
-        electromagnet_pin,
-        hall_sensor_pin,
+        electromagnet,
+        hall_sensor,
         electromagnet_power,
         actions,
         current_value,
@@ -54,9 +54,9 @@ public class StatusData {
     public Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object>();
         result.Add("id", id);
-        result.Add("electromagnet_pin", electromagnet_pin);
-        result.Add("hall_sensor_pin", hall_sensor_pin);
+        result.Add("electromagnet", electromagnet);
         result.Add("electromagnet_power", electromagnet_power);
+        result.Add("hall_sensor", hall_sensor);
 
         Dictionary<int, Dictionary<string, object>> actionsList = new Dictionary<int, Dictionary<string, object>>();
         foreach (EmbAction action in actions) {
