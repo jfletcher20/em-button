@@ -57,7 +57,7 @@ void loop() {
 
   userButtonLogic(); // user button should always be available regardless of whether 
   if (enableDevice) {
-    analogWrite(emb.keyData.electromagnet, emb.keyData.electromagnet_power * 255);
+    analogWrite(emb.keyData.electromagnet, (int)(emb.keyData.electromagnet_power * 255));
     int newReading = filter->normalize();
     if(newReading > -11) {
       displayManager.drawScene();

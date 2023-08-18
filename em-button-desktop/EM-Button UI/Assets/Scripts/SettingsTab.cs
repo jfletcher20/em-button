@@ -126,6 +126,7 @@ public class SettingsTab : MonoBehaviour {
         }
         _hideDataForm();
         Debug.LogError(command.ToString());
+        serialMonitor.sendCommand(command);
     }
 
     private bool _confirmDeletion() {

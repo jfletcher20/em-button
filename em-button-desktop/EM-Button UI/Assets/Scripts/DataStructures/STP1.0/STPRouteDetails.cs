@@ -78,7 +78,7 @@ public class RouteManagement {
 
         _savedRoutes.Add(STPRouteDetails.from("API Help", "/", STPMethod.GET));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.GET, null, Color.red));
-        //_savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.POST, db_post_data, Color.red));
+        _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.POST, db_post_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.PUT, db_put_or_save_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Database", "/db/", STPMethod.DELETE, db_delete_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("List routes", "/device/routes/", STPMethod.GET));
