@@ -156,8 +156,8 @@ class EmbServer {
                     deserializeJson(doc, jsonData);
                     STP::announceRequest(doc);
                     handleRequest(doc["route"], doc);
-                    /* example request:
-                    STP1.0{"route":"/device/calibrate/","method":"get"}
+                    /* example request (method isn't case sensitive):
+                    STP1.0{"route":"/","method":"GET"}
                     */
                 }
             }

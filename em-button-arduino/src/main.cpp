@@ -48,12 +48,15 @@ unsigned long timePressed = 0;
 void userButtonLogic();
 
 int counter = 0;
+int lastRecordedTime = 0;
+void _enableDevice();
+void _disableDevice();
 void loop() {
 
   embServer.serialLogic();
 
   userButtonLogic(); // user button should always be available regardless of whether 
-  if(enableDevice) {
+  if (enableDevice) {
     analogWrite(emb.keyData.electromagnet, emb.keyData.electromagnet_power * 255);
     int newReading = filter->normalize();
     if(newReading > -11) {
@@ -69,10 +72,31 @@ void loop() {
         displayManager.drawScene();
       }
     }
+  } else {
+    analogWrite(emb.keyData.electromagnet, 0);
+  }
+
+  // use lastrecordedtime to disable the device after 45 seconds, and re-enable it after twice that time
+  if(millis() - lastRecordedTime > 45000 && enableDevice) {
+    _disableDevice();
+    lastRecordedTime = millis();
+  } else if(millis() - lastRecordedTime > 90000 && !enableDevice) {
+    _enableDevice();
+    lastRecordedTime = millis();
   }
 
 }
 
+
+void _disableDevice() {
+    *displayManager.enableDevice = enableDevice = false;
+    displayManager.drawScene();
+}
+
+void _enableDevice() {
+    *displayManager.enableDevice = enableDevice = true;
+    displayManager.drawScene();
+}
 
 void userButtonLogic() {
   if(digitalRead(0) == HIGH && !pressed && millis() - timePressed > 100) {
