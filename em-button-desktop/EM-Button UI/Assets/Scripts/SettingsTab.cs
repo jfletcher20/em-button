@@ -7,9 +7,9 @@ using System.Linq;
 public class SettingsTab : MonoBehaviour {
     public SerialMonitor serialMonitor;
 
-    public Button settingsButton;
-    public GameObject settingsMenu;
-    private Animator settingsMenuAnimator;
+    public Button apiButton;
+    public GameObject apiMenu;
+    private Animator apiMenuAnimator;
 
     public Button sendCommandButton;
 
@@ -34,22 +34,22 @@ public class SettingsTab : MonoBehaviour {
     private void Awake() {
         monitorEvents = GetComponent<MonitorEvents>();
         selectedRouteManager = GetComponent<SelectedRouteManager>();
-        settingsMenuAnimator = settingsMenu.GetComponent<Animator>();
+        apiMenuAnimator = apiMenu.GetComponent<Animator>();
         dataFormAnimator = dataForm.transform.parent.GetComponent<Animator>();
         embFormFields = embFormParent.GetComponentsInChildren<TMP_InputField>();
         clearChildren();
     }
 
     void Start() {
-        settingsButton.onClick.AddListener(animateSettingsMenu);
-        settingsButton.onClick.AddListener(initRoutes);
+        apiButton.onClick.AddListener(animateSettingsMenu);
+        apiButton.onClick.AddListener(initRoutes);
         sendCommandButton.onClick.AddListener(_loadRoute);
         cancelButton.onClick.AddListener(_hideDataForm);
         submitDataButton.onClick.AddListener(_loadRouteWithData);
     }
 
     void animateSettingsMenu() {
-        settingsMenuAnimator.SetBool("enabled", !settingsMenuAnimator.GetBool("enabled"));
+        apiMenuAnimator.SetBool("enabled", !apiMenuAnimator.GetBool("enabled"));
         embModelClickInteractions.disabled = !embModelClickInteractions.disabled;
     }
 
@@ -147,7 +147,7 @@ public class SettingsTab : MonoBehaviour {
 
     private Dictionary<string, string> _getEmbDataFromForm() {
         double emPower = (double)((int)(embFormParent.GetComponentInChildren<Slider>().value * 100)) / 100;
-        List<EmbAction> embActions = settingsMenu.transform.parent.parent.GetComponentInChildren<ActionsListForm>().embActions;
+        List<EmbAction> embActions = apiMenu.transform.parent.parent.GetComponentInChildren<ActionsListForm>().embActions;
         EmbButton embButton = new EmbButton {
             id = 0,
             hall_sensor = embFormFields[0].text == "" ? 4 : int.Parse(embFormFields[0].text),

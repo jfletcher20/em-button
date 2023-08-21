@@ -81,11 +81,11 @@ class STPDBConnection {
         void postOrPut(STPMethod req, DynamicJsonDocument json) {
             EmbButton emb = embFromJson(json);
             switch (req) {
+                case STPMethod::PUT:
+                    // STP2::createResponse(200, "Updating record...", "updated", database->update(emb) ? String(true) : String(false));
+                    // break;
                 case STPMethod::POST:
                     STP2::createResponse(200, "Adding record...", "added", String(database->add(emb, true)));
-                    break;
-                case STPMethod::PUT:
-                    STP2::createResponse(200, "Updating record...", "updated", database->update(emb) ? String(true) : String(false));
                     break;
             }
         }

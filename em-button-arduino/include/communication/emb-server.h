@@ -84,7 +84,6 @@ class EmbServer {
         }
 
         void getDataRoute() {
-            // prepare displayManager->getValues() as string[]
             String dataKeys[displayManager->getKeysLength()];
             String data[displayManager->getKeysLength()];
             for(int i = 0; i < displayManager->getKeysLength(); i++) {
@@ -113,12 +112,12 @@ class EmbServer {
             Serial.println(STP::createResponse(200, "Accessed normalized hall sensor data", "value_normalized", String(filter->normalized)));
         }
 
-        void putEmbDataRoute(DynamicJsonDocument json) {
-            this->filter->emb->keyData = stp.embFromJson(json);
-            stp.database->add(this->filter->emb->keyData, true);
-            calibrateFilter();
-            Serial.println(STP::createResponse(204, "Updated emb data and reloaded data", "data", displayManager->getJson().c_str()));
-        }
+        // void putEmbDataRoute(DynamicJsonDocument json) {
+        //     this->filter->emb->keyData = stp.embFromJson(json);
+        //     stp.database->add(this->filter->emb->keyData, true);
+        //     calibrateFilter();
+        //     Serial.println(STP::createResponse(204, "Updated emb data and reloaded data", "data", displayManager->getJson().c_str()));
+        // }
     public:
         HallFilter* filter;
         DisplayManager* displayManager;
@@ -203,9 +202,11 @@ class EmbServer {
                 putEnableDisableRoute(false);
             } else if (String(route) == getRouteByKey(Routes::DATA) && method(json) == STPMethod::GET) {
                 getDataRoute();
-            } else if (String(route) == getRouteByKey(Routes::SAVE) && method(json) == STPMethod::PUT) {
-                putEmbDataRoute(json);
-            } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET) && method(json) == STPMethod::GET) {
+            }
+            // else if (String(route) == getRouteByKey(Routes::SAVE) && method(json) == STPMethod::PUT) {
+            //     putEmbDataRoute(json);
+            // }
+            else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET) && method(json) == STPMethod::GET) {
                 getElectromagnetDataRoute();
             } else if (String(route) == getRouteByKey(Routes::ELECTROMAGNET_POWER) && method(json) == STPMethod::PUT) {
                 putElectromagnetDataRoute(json);

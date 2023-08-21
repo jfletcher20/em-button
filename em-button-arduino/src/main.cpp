@@ -101,7 +101,6 @@ void _enableDevice() {
 
 void userButtonLogic() {
   if(digitalRead(0) == HIGH && !pressed && millis() - timePressed > 100) {
-    // Serial.println("\nUser button pressed. Refreshing data...");
     embServer.refreshDisplayData();
     pressed = true;
     timePressed = millis();
