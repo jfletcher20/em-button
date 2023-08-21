@@ -16,7 +16,7 @@ public class Selectable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void Initialize(ISelect selectionManager) {
-        image.color = normalColor;
+        image.color = normalColor == null ? Color.white : normalColor;
         this.selectionManager = selectionManager;
         if (!isEnabled) Disable();
     }

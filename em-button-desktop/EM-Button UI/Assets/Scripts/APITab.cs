@@ -7,6 +7,9 @@ using System.Linq;
 public class APITab : MonoBehaviour {
     public SerialMonitor serialMonitor;
 
+    public Button settingsButton;
+    public bool fromSettings = false;
+
     public Button apiButton;
     public GameObject apiMenu;
     private Animator apiMenuAnimator;
@@ -16,7 +19,7 @@ public class APITab : MonoBehaviour {
     public Button cancelButton;
     public Button submitDataButton;
     public GameObject dataForm;
-    private Animator dataFormAnimator;
+    public Animator dataFormAnimator;
 
     public TMP_InputField commandDataDisplay;
 
@@ -43,16 +46,17 @@ public class APITab : MonoBehaviour {
     }
 
     void Start() {
-        apiButton.onClick.AddListener(animateSettingsMenu);
+        apiButton.onClick.AddListener(showApiMenu);
         apiButton.onClick.AddListener(initRoutes);
         sendCommandButton.onClick.AddListener(_loadRoute);
         cancelButton.onClick.AddListener(_hideDataForm);
         submitDataButton.onClick.AddListener(_loadRouteWithData);
     }
 
-    void animateSettingsMenu() {
+    void showApiMenu() {
         apiMenuAnimator.SetBool("enabled", !apiMenuAnimator.GetBool("enabled"));
         embModelClickInteractions.disabled = !embModelClickInteractions.disabled;
+        settingsButton.enabled = !settingsButton.enabled;
     }
 
     private bool _initRoutes = true;
@@ -83,10 +87,7 @@ public class APITab : MonoBehaviour {
             foreach (Transform child in dataForm.transform)
                 child.gameObject.SetActive(false);
             if (route.method != STPMethod.DELETE && (route.path == "/db/" || route.path == "/device/save/")) {
-                embFormParent.SetActive(true);
-                embFormFields[0].text = monitorEvents.embData.hall_sensor.ToString();
-                embFormFields[1].text = monitorEvents.embData.electromagnet.ToString();
-                embFormParent.GetComponentInChildren<Slider>().value = (float)monitorEvents.embData.electromagnet_power;
+                initSettingsFormValues();    
             } else if (route.method == STPMethod.DELETE) {
                 deletionConfirmationField.transform.parent.gameObject.SetActive(true);
             } else {
@@ -96,13 +97,26 @@ public class APITab : MonoBehaviour {
         }
     }
 
+    public void initSettingsFormValues() {
+        embFormParent.SetActive(true);
+        embFormFields[0].text = monitorEvents.embData.hall_sensor.ToString();
+        embFormFields[1].text = monitorEvents.embData.electromagnet.ToString();
+        embFormParent.GetComponentInChildren<Slider>().value = (float)monitorEvents.embData.electromagnet_power;
+    }
+
     private void _hideDataForm() {
         dataFormAnimator.SetBool("enabled", false);
         sendCommandButton.enabled = true;
+        if (fromSettings) {
+            apiButton.enabled = true;
+            embModelClickInteractions.disabled = false;
+        }
     }
 
     private void _loadRouteWithData() {
-        RouteManagement.STPRouteDetails route = selectedRouteManager.getSelectedRoute();
+        RouteManagement.STPRouteDetails route;
+        if (!fromSettings) route = selectedRouteManager.getSelectedRoute();
+        else route = RouteManagement.routesList.Where((r) => r.path.Contains("/db/") && r.method == STPMethod.POST).First();
         if (route.data == null) return;
         STPCommand command = new STPCommand { route = route.path, method = route.method, data = new Dictionary<string, string>() };
         switch (route.path) {
@@ -110,7 +124,7 @@ public class APITab : MonoBehaviour {
                 switch(route.method) {
                     case STPMethod.POST:
                     case STPMethod.PUT:
-                        command.data = _getEmbDataFromForm();
+                        command.data = getEmbDataFromForm();
                         break;
                     case STPMethod.DELETE:
                         if (!_confirmDeletion()) return;
@@ -120,7 +134,7 @@ public class APITab : MonoBehaviour {
                 break;
             case "/device/save":
                 if (route.method == STPMethod.PUT)
-                    command.data = _getEmbDataFromForm();
+                    command.data = getEmbDataFromForm();
                 print("loaded save route");
                 break;
             case "/device/electromagnet/power/":
@@ -132,6 +146,10 @@ public class APITab : MonoBehaviour {
         Debug.LogWarning(command.ToString());
         commandDataDisplay.text = command.ToString();
         serialMonitor.sendCommand(command);
+        if(fromSettings) {
+            settingsButton.enabled = false;
+            apiButton.enabled = false;
+        }
     }
 
     private bool _confirmDeletion() {
@@ -150,7 +168,7 @@ public class APITab : MonoBehaviour {
         };
     }
 
-    private Dictionary<string, string> _getEmbDataFromForm() {
+    public Dictionary<string, string> getEmbDataFromForm() {
         double emPower = (double)((int)(embFormParent.GetComponentInChildren<Slider>().value * 100)) / 100;
         List<EmbAction> embActions = apiMenu.transform.parent.parent.GetComponentInChildren<ActionsListForm>().embActions;
         EmbButton embButton = new EmbButton {
