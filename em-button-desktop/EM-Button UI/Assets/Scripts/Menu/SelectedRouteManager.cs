@@ -31,7 +31,7 @@ public class SelectedRouteManager : ISelect {
 
     public void HideDataForm() {
         additionalDataForm.GetComponent<Animator>().SetBool("enabled", false);
-        GetComponent<SettingsTab>().sendCommandButton.enabled = true;
+        GetComponent<APITab>().sendCommandButton.enabled = true;
     }
 
     /// <summary>

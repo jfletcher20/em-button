@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class SettingsTab : MonoBehaviour {
+public class APITab : MonoBehaviour {
     public SerialMonitor serialMonitor;
 
     public Button apiButton;
@@ -17,6 +17,8 @@ public class SettingsTab : MonoBehaviour {
     public Button submitDataButton;
     public GameObject dataForm;
     private Animator dataFormAnimator;
+
+    public TMP_InputField commandDataDisplay;
 
     public GameObject routeNavigator;
     public GameObject routeSelectablePrefab;
@@ -70,8 +72,10 @@ public class SettingsTab : MonoBehaviour {
     private void _loadRoute() {
         RouteManagement.STPRouteDetails route = selectedRouteManager.getSelectedRoute();
         STPCommand command = new STPCommand { route = route.path, method = route.method, data = route.data };
+        if (!commandDataDisplay.isActiveAndEnabled) commandDataDisplay.gameObject.SetActive(true);
         if (route.validate(command) && route.data == null) {
             dataFormAnimator.SetBool("enabled", false);
+            commandDataDisplay.text = command.ToString();
             serialMonitor.sendCommand(command);
         } else {
             dataFormAnimator.SetBool("enabled", true);
@@ -125,7 +129,8 @@ public class SettingsTab : MonoBehaviour {
                 break;
         }
         _hideDataForm();
-        Debug.LogError(command.ToString());
+        Debug.LogWarning(command.ToString());
+        commandDataDisplay.text = command.ToString();
         serialMonitor.sendCommand(command);
     }
 

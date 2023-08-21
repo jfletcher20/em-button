@@ -40,7 +40,6 @@ public class MonitorEvents : MonoBehaviour {
         } else if (latest.Contains("routes")) {
             return routesUpdate(latest);
         } else {
-            Debug.LogWarning("DID NOT PARSE: " + latest);
             return empty;
         }
     }

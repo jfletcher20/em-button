@@ -90,7 +90,7 @@ public class RouteManagement {
         _savedRoutes.Add(STPRouteDetails.from("Set EM strength", "/device/electromagnet/power/", STPMethod.PUT, electromagnet_power_data, Color.red));
         _savedRoutes.Add(STPRouteDetails.from("Get reading", "/device/hallsensor/", STPMethod.GET));
         _savedRoutes.Add(STPRouteDetails.from("Get normalized reading", "/device/hallsensor/normalized/", STPMethod.GET));
-        _savedRoutes.Add(STPRouteDetails.from("Calibrate device", "/device/calibrate/", STPMethod.GET, null, Color.magenta));
+        _savedRoutes.Add(STPRouteDetails.from("Calibrate device", "/device/calibrate/", STPMethod.GET, null, Color.blue));
 
     }
 
