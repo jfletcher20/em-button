@@ -7,9 +7,10 @@ using UnityEngine.UI;
 public class ActionInputField : MonoBehaviour {
 
     public EmbAction action = new EmbAction();
+
     private Button duplicateButton, deleteButton;
-    private TMP_InputField key;
-    private Slider slider;
+    public TMP_InputField key;
+    public Slider slider;
     private ActionsListForm actionsListForm;
     private void Awake() {
         action.actionId = transform.parent.GetSiblingIndex();

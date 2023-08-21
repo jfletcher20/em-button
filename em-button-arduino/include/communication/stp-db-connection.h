@@ -82,10 +82,10 @@ class STPDBConnection {
             EmbButton emb = embFromJson(json);
             switch (req) {
                 case STPMethod::POST:
-                    database->add(emb, true);
+                    STP2::createResponse(200, "Adding record...", "added", String(database->add(emb, true)));
                     break;
                 case STPMethod::PUT:
-                    database->update(emb);
+                    STP2::createResponse(200, "Updating record...", "updated", database->update(emb) ? String(true) : String(false));
                     break;
             }
         }

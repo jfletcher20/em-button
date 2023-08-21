@@ -54,20 +54,20 @@ public class EmbButton {
 
     public static EmbButton from(DeviceStatusResponseModel status) {
         return new EmbButton {
-            id = status.data.current_state.id,
-            actions = status.data.current_state.actions,
-            electromagnet = status.data.current_state.electromagnet,
-            hall_sensor = status.data.current_state.hall_sensor,
-            electromagnet_power = status.data.current_state.electromagnet_power,
+            id = status.data.current_value.id,
+            actions = status.data.current_value.actions,
+            electromagnet = status.data.current_value.electromagnet,
+            hall_sensor = status.data.current_value.hall_sensor,
+            electromagnet_power = status.data.current_value.electromagnet_power,
         };
     }
 
     public void update(DeviceStatusResponseModel status) {
-        id = status.data.current_state.id;
-        actions = status.data.current_state.actions;
-        electromagnet = status.data.current_state.electromagnet;
-        hall_sensor = status.data.current_state.hall_sensor;
-        electromagnet_power = status.data.current_state.electromagnet_power;
+        id = status.data.current_value.id;
+        actions = status.data.current_value.actions;
+        electromagnet = status.data.current_value.electromagnet;
+        hall_sensor = status.data.current_value.hall_sensor;
+        electromagnet_power = status.data.current_value.electromagnet_power;
     }
 
     public string toJson() {

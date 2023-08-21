@@ -96,7 +96,8 @@
 			"string_view": "cpp",
 			"cinttypes": "cpp",
 			"*.rh": "cpp",
-			"iostream": "cpp"
+			"iostream": "cpp",
+			"codecvt": "cpp"
 		}
 	}
 }

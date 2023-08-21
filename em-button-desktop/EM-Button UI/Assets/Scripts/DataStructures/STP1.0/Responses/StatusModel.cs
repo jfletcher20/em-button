@@ -16,11 +16,11 @@ public class DeviceStatusResponseModel : STPResponseModel {
 
 [System.Serializable]
 public class StatusDataModel : STPDataModel {
-    public StatusData current_state;
+    public StatusData current_value;
     public override Dictionary<string, object> toDictionary() {
         Dictionary<string, object> result = new Dictionary<string, object>();
         result.Add("message", message);
-        result.Add("current_state", current_state.toDictionary());
+        result.Add("current_value", current_value.toDictionary());
         return result;
     }
 }
@@ -30,7 +30,7 @@ public class StatusData {
     public int id, electromagnet, hall_sensor;
     public double electromagnet_power;
     public List<EmbAction> actions;
-    public int current_value;
+    public int current_state;
     public int value_normalized;
     public int times_pressed;
     public int button_pressed;
@@ -65,7 +65,7 @@ public class StatusData {
 
         result.Add("actions", actionsList);
 
-        result.Add("current_value", current_value);
+        result.Add("current_state", current_state);
         result.Add("value_normalized", value_normalized);
         result.Add("times_pressed", times_pressed);
         result.Add("button_pressed", button_pressed);

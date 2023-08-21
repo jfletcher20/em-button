@@ -5,6 +5,11 @@ using UnityEngine;
 public class ActionsListForm : MonoBehaviour {
 
     public List<EmbAction> embActions = new List<EmbAction>(3);
+    public MonitorEvents monitorEvents;
+
+    private void Awake() {
+        embActions = monitorEvents.embData.actions;
+    }
 
     public void UpdateEmbActions() {
         var actionsList = GetComponentsInChildren<ActionInputField>();

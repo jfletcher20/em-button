@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class MonitorEvents : MonoBehaviour {
 
-    public EmbButton embData;
+    public EmbButton embData = new EmbButton();
 
     private SerialMonitor serialMonitor;
+    public ActionsListForm actionsListForm;
     private float lastUpdate = 0;
+    
+    public MonitorEvents() {
+        embData.actions = new List<EmbAction>(3);
+    }
+
     private void Awake() {
         serialMonitor = GetComponent<SerialMonitor>();
     }
@@ -22,8 +28,9 @@ public class MonitorEvents : MonoBehaviour {
     Dictionary<string, object> empty = new Dictionary<string, object>();
     private Dictionary<string, object> specifyData() {
         string latest = serialMonitor.latest;
-        if (latest.Contains("current_state")) {
-            return statusUpdate(latest);
+        if (latest.Contains("current_value")) {
+            if (latest.Contains("hall sensor data")) return statusUpdate(latest, true);
+            else return statusUpdate(latest);
         } else if (latest.Contains("time_when_pressed")) {
             return keyPressUpdate(latest);
         } else if (latest.Contains("ble_connected") && latest.Contains("\"status\":300")) {
@@ -40,15 +47,25 @@ public class MonitorEvents : MonoBehaviour {
 
     Dictionary<string, object> statusUpdate(string latest) {
         var deviceStatus = statusFromJson(latest);
-        if (latest.Contains("\"ble_connected\":true")) deviceStatus.data.current_state.ble_connected = true;
+        if (latest.Contains("\"ble_connected\":true")) deviceStatus.data.current_value.ble_connected = true;
         Dictionary<string, object> dataToDisplay = new Dictionary<string, object>();
-        dataToDisplay.Add("Device is on", deviceStatus.data.current_state.device_enabled);
-        dataToDisplay.Add("Bluetooth connected", deviceStatus.data.current_state.ble_connected);
-        dataToDisplay.Add("Current", deviceStatus.data.current_state.current_value + " (" + deviceStatus.data.current_state.value_normalized + ")");
-        KeyValuePair<string, object> kvp = pressedData(deviceStatus.data.current_state.button_pressed, deviceStatus.data.current_state.times_pressed);
+        dataToDisplay.Add("Device is on", deviceStatus.data.current_value.device_enabled);
+        dataToDisplay.Add("Bluetooth connected", deviceStatus.data.current_value.ble_connected);
+        dataToDisplay.Add("Current", deviceStatus.data.current_value.current_state + " (" + deviceStatus.data.current_value.value_normalized + ")");
+        KeyValuePair<string, object> kvp = pressedData(deviceStatus.data.current_value.button_pressed, deviceStatus.data.current_value.times_pressed);
         dataToDisplay.Add(kvp.Key, kvp.Value);
-        if (embData == null) embData = EmbButton.from(deviceStatus);
-        else embData.update(deviceStatus);
+        if (embData == null) {
+            embData = EmbButton.from(deviceStatus);
+        } else {
+            embData.update(deviceStatus);
+        }
+        return dataToDisplay;
+    }
+
+    Dictionary<string, object> statusUpdate(string latest, bool hasOnlyHallSensorData) {
+        var deviceStatus = statusFromJson(latest);
+        Dictionary<string, object> dataToDisplay = new Dictionary<string, object>();
+        dataToDisplay.Add("Current", deviceStatus.data.current_value.current_state + " (" + deviceStatus.data.current_value.value_normalized + ")");
         return dataToDisplay;
     }
 
@@ -92,7 +109,7 @@ public class MonitorEvents : MonoBehaviour {
     }
 
     public Dictionary<string, object> getDictionaryFromJson(string json) {
-        if (json.Contains("current_state")) {
+        if (json.Contains("current_value")) {
             return statusFromJson(json).toDictionary();
         } else if (json.Contains("time_when_pressed")) {
             return keyPressFromJson(json).toDictionary();

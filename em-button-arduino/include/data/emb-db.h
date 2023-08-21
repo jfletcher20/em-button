@@ -158,7 +158,7 @@ class EmbButtonDB {
     }
 
     int add(EmbButton emb, bool clear = false) {
-      if(clear) {
+      if (clear) {
         this->clear();
       }
 

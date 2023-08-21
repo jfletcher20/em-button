@@ -89,7 +89,7 @@ class DisplayManager {
                 action["keyId"] = filter->emb->keyData.actions[i].keyId;
                 action["activation_point"] = filter->emb->keyData.actions[i].activation_point;
             }
-            doc["current_value"] = filter->getDisplayValue();
+            doc["current_state"] = filter->getDisplayValue();
             doc["value_normalized"] = filter->normalized;
             doc["times_pressed"] = *timesPressed;
             doc["button_pressed"] = filter->pressed();
