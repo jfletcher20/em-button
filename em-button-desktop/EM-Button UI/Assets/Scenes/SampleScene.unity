@@ -608,6 +608,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serialMonitor: {fileID: 88241152}
   settingsButton: {fileID: 1076184907}
+  fromSettings: 0
   apiButton: {fileID: 695333507}
   apiMenu: {fileID: 241686644}
   sendCommandButton: {fileID: 2051367549}
@@ -6187,6 +6188,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serialMonitor: {fileID: 88241152}
+  settingsButton: {fileID: 1076184907}
+  apiButton: {fileID: 695333507}
 --- !u!1001 &1268494725
 PrefabInstance:
   m_ObjectHideFlags: 0
