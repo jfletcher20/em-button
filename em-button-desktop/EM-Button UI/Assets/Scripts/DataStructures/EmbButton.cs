@@ -18,7 +18,7 @@ public class EmbButton {
 
         foreach (var action in actions) {
             Dictionary<string, object> actions = new Dictionary<string, object> {
-                { "id", action.actionId },
+                { "actionId", action.actionId },
                 { "keyId", action.keyId },
                 { "activation_point", action.activation_point }
             };
@@ -39,7 +39,7 @@ public class EmbButton {
         };
 
         foreach (EmbAction action in actions) {
-            result["actions"] += "{\"id\":" + action.actionId + ","
+            result["actions"] += "{\"actionId\":" + action.actionId + ","
                 + "\"keyId\":" + action.keyId.ToString() + ","
                 + "\"activation_point\":" + action.activation_point.ToString() + "},";
         }

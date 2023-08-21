@@ -100,5 +100,32 @@ class DisplayManager {
             serializeJson(doc, json);
             return json.c_str();
         }
+        std::string* getKeys() {
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, getJson());
+            std::string* keys = new std::string[doc.size()];
+            int i = 0;
+            for(JsonPair pair : doc.as<JsonObject>()) {
+                keys[i] = pair.key().c_str();
+                i++;
+            }
+            return keys;
+        }
+        std::string* getValues() {
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, getJson());
+            std::string* values = new std::string[doc.size()];
+            int i = 0;
+            for(JsonPair pair : doc.as<JsonObject>()) {
+                values[i] = pair.value().as<std::string>();
+                i++;
+            }
+            return values;
+        }
+        int getKeysLength() {
+            DynamicJsonDocument doc(1024);
+            deserializeJson(doc, getJson());
+            return doc.size();
+        }
 
 };

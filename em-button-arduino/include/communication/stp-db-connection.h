@@ -72,7 +72,8 @@ class STPDBConnection {
                     database->getAll();
                     break;
                 case STPMethod::DELETE:
-                    database->remove(json["id"]);
+                    // database->remove(json["id"]);
+                    database->clear();
                     break;
             }
         }
@@ -81,7 +82,7 @@ class STPDBConnection {
             EmbButton emb = embFromJson(json);
             switch (req) {
                 case STPMethod::POST:
-                    database->add(emb);
+                    database->add(emb, true);
                     break;
                 case STPMethod::PUT:
                     database->update(emb);
@@ -124,7 +125,7 @@ class STPDBConnection {
             for (int i = 0; i < 3; i++) {
                 DynamicJsonDocument action(100);
                 deserializeJson(action, actions[i].as<String>());
-                id[i] = action["id"] | -1;
+                id[i] = action["actionId"] | -1;
                 keyId[i] = action["keyId"] | KEY_RETURN;
                 activation_point[i] = action["activation_point"] | 0.5;
             }

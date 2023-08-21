@@ -78,7 +78,14 @@ class EmbServer {
         }
 
         void getDataRoute() {
-            Serial.println(STP::createResponse(200, "Accessed data route successfully", "data", displayManager->getJson().c_str()));
+            // prepare displayManager->getValues() as string[]
+            String dataKeys[displayManager->getKeysLength()];
+            String data[displayManager->getKeysLength()];
+            for(int i = 0; i < displayManager->getKeysLength(); i++) {
+                dataKeys[i] = displayManager->getKeys()[i].c_str();
+                data[i] = displayManager->getValues()[i].c_str();
+            }
+            Serial.println(STP::createResponse(200, "Accessed data", dataKeys, data, displayManager->getKeysLength()));
         }
 
         void getElectromagnetDataRoute() {
@@ -172,7 +179,7 @@ class EmbServer {
 
         void refreshDisplayData(bool printData = true) {
             displayManager->drawScene();
-            if(printData) Serial.println(STP::createResponse(200, "Data refreshed successfully", "current_state", displayManager->getJson().c_str()));
+            if(printData) Serial.println(STP::createResponse(200, "Data refreshed successfully", "current_value", displayManager->getJson().c_str()));
         }
 
         void handleRequest(String route, DynamicJsonDocument json) {
