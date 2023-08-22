@@ -58,9 +58,8 @@ public class SerialMonitor : MonoBehaviour {
     }
 
     public void portNotFound() {
-        portDataComponent.text = "ERROR: " + _portNotFound;
+        portDataComponent.text = _portNotFound;
         currentMonitorData["port"] = portDataComponent.text;
-        //refreshMonitor(new Dictionary<string, object>());
     }
 
     void initSerialPort(PortDescription discoveredPort) {
