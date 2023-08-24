@@ -8,7 +8,7 @@ class HallFilter {
 
     private:
         #define THRESHOLD 20
-        int DEFAULT_VALUE = 1910;
+        int DEFAULT_VALUE = 2500;
         
         static const int WINDOW_SIZE = 40;
 
@@ -45,7 +45,7 @@ class HallFilter {
     public:
         Emb* emb;
 
-        const int max_normalized = 10;
+        const int max_normalized = 100;
         int current = DEFAULT_VALUE;
         int normalized = 0;
 
@@ -81,7 +81,7 @@ class HallFilter {
             // if(result < 0) result *= -1;
             if(result > normalized + 1 || result < normalized - 1) {
                 normalized = result;
-                return normalized;
+                return normalized; 
             }
             return -500;
         }

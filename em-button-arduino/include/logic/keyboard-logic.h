@@ -14,6 +14,7 @@ struct EmbKeyBlock {
   unsigned long long int timesPressed = 0; // tracks button press count for stats
 } keyBlock;
 
+int _lastKeyPressed = -1;
 class KeyboardLogic {
 
   public:
@@ -27,12 +28,12 @@ class KeyboardLogic {
         // get the activation point for the current action
         activation_point = filter.max_normalized * filter.emb->keyData.actions[i].activation_point;
         // if the reading meets it, the index is the current one
-        if(reading >= activation_point) {
+        if(reading >= activation_point - filter.max_normalized * 0.1) {
           indexOfPressed = i; // the next might also meet criteria, so continue until it fails
         }
       }
 
-      if(indexOfPressed == -1) return false; // if no action is pressed, return false
+      if(indexOfPressed == -1 && _lastKeyPressed == -1) return false; // if no action is pressed, return false
 
       // manages keylock duration (debouncing)
       if(keyBlock.keyLock) {
@@ -48,7 +49,7 @@ class KeyboardLogic {
       }
 
       // manages keypress
-      if(filter.emb->connectionStatus.keyboardConnected && !keyBlock.keyLock) {
+      if(filter.emb->connectionStatus.keyboardConnected && !keyBlock.keyLock && filter.emb->keyData.actions[indexOfPressed].keyId != -1) {
 
         filter.emb->keyboard.clearWriteError();
         filter.emb->keyboard.releaseAll();
@@ -69,13 +70,35 @@ class KeyboardLogic {
           String(millis())
         };
         
-        Serial.println(STP::createResponse(100, "Pressed key" + String(indexOfPressed), keys, values, 5));
+        Serial.println(STP::createResponse(100, "Pressed key " + String(indexOfPressed), keys, values, 5));
         keyBlock.keyLock = 1;
+
+        _lastKeyPressed = indexOfPressed;
+
+      } else if (filter.emb->connectionStatus.keyboardConnected && indexOfPressed != _lastKeyPressed) {
+        
+        String keys[5] = {
+          "keyId",
+          "actionId",
+          "activation_point",
+          "times_pressed",
+          "time_when_pressed"
+        };
+        String values[5] = {
+          String(-1),
+          String(-1),
+          String(-1),
+          String(keyBlock.timesPressed),
+          String(millis())
+        };
+
+        Serial.println(STP::createResponse(100, "Pressed key " + String(indexOfPressed), keys, values, 5));
+
+        _lastKeyPressed = indexOfPressed;
 
       }
 
-
-      return timesPressedIncreased;
+      return timesPressedIncreased || indexOfPressed != _lastKeyPressed;
 
     }
 

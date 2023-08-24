@@ -61,13 +61,13 @@ void loop() {
       analogWrite(emb.keyData.electromagnet, (int)(emb.keyData.electromagnet_power * 10) + 245);
     else Serial.println("STP1.0{\"status\":400,\"data\":{\"message\":\"Electromagnet power is less than 1. Rejected command.\"}}");
     int newReading = filter->normalize();
-    if(newReading > -11) {
+    if (newReading > -11) {
       displayManager.drawScene();
     }
-    if(KeyboardLogic::getConnectionStatusUpdate(emb)) {
+    if (KeyboardLogic::getConnectionStatusUpdate(emb)) {
       displayManager.drawScene();
     }
-    if(KeyboardLogic::keyboardLogic(*filter)) { 
+    if (KeyboardLogic::keyboardLogic(*filter)) { 
       counter++;
       if(counter > 15) { // if it refreshes too often, it causes lag
         counter = 0;
