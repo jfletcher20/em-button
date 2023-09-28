@@ -1,7 +1,6 @@
 #pragma once
 #include "emb-hall-filter.h"
 #include "data/emb-data.h"
-#include "emb-logic.h"
 #include "communication/stp-db-connection.h"
 #include <Arduino.h>
 
@@ -49,7 +48,7 @@ class KeyboardLogic {
       }
 
       // manages keypress
-      if(filter.emb->connectionStatus.keyboardConnected && !keyBlock.keyLock && filter.emb->keyData.actions[indexOfPressed].keyId != -1) {
+      if(filter.emb->connectionStatus.keyboardConnected && !keyBlock.keyLock && filter.emb->keyData.actions[indexOfPressed].keyId != -1 && indexOfPressed != 120 && filter.emb->keyData.actions[indexOfPressed].actionId != -1) {
 
         filter.emb->keyboard.clearWriteError();
         filter.emb->keyboard.releaseAll();

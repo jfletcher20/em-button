@@ -6,7 +6,6 @@ enum Routes {
     ENABLE,
     DISABLE,
     DATA,
-    // SAVE,
     ELECTROMAGNET,
     ELECTROMAGNET_POWER,
     HALLSENSOR,
@@ -15,13 +14,12 @@ enum Routes {
 
 const String routes[] = {
     "/", // GET
-    "/db/", // GET, POST, PUT, DELETE
+    "/db/", // GET, POST, DELETE
     "/device/routes/", // GET
     "/device/calibrate/", // GET
     "/device/enable/", // PUT
     "/device/disable/", // PUT
     "/device/data/", // GET
-    // "/device/save/", // PUT
     "/device/electromagnet/", // GET
     "/device/electromagnet/power/", // PUT
     "/device/hallsensor/", // GET

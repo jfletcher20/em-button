@@ -3,7 +3,6 @@
 #include "logic/emb-hall-filter.h"
 #include "logic/keyboard-logic.h"
 #include "stp-db-connection.h"
-#include "logic/emb-logic.h"
 #include "display.h"
 #include "routes.h"
 
@@ -69,7 +68,7 @@ class EmbServer {
         }
 
         void getCalibrateRoute() {
-            Serial.println(STP::createResponse(200, "Beginning calibration; the device will now restart"));
+            Serial.println(STP::createResponse(200, "Calibrating the sensor"));
             calibrateFilter();
         }
 
@@ -176,10 +175,13 @@ class EmbServer {
         }
 
         void localRequestLogic(String request) {
-            DynamicJsonDocument doc(1024);
-            deserializeJson(doc, request);
-            STP::announceRequest(doc);
-            handleRequest(doc["route"], doc);
+            if(request.startsWith("STP1.0")) {
+                String jsonData = request.substring(6);
+                DynamicJsonDocument doc(1024);
+                deserializeJson(doc, request);
+                STP::announceRequest(doc);
+                handleRequest(doc["route"], doc);
+            }
         }
 
         void refreshDisplayData(bool printData = true) {

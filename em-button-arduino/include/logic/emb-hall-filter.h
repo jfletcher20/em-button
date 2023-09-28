@@ -8,9 +8,9 @@ class HallFilter {
 
     private:
         #define THRESHOLD 20
-        int DEFAULT_VALUE = 2500;
-        
         static const int WINDOW_SIZE = 40;
+        
+        int DEFAULT_VALUE = 2560;
 
         int values[WINDOW_SIZE];
         int sum = 0;
@@ -31,7 +31,7 @@ class HallFilter {
             int diff = abs(value - average);
             if (diff > THRESHOLD) {
                 // The value is noisy, skip it
-                return 0; // continue
+                return current; // continue
             }
 
             // The value is not noisy, print it
@@ -39,7 +39,7 @@ class HallFilter {
                 current = average;
                 return average;
             }
-            return 0;
+            return current;
         }
 
     public:
@@ -73,7 +73,6 @@ class HallFilter {
 
         int normalize() {
             int reading = denoise();
-            if(reading == 0) return -500;
             // int result = map(reading, DEFAULT_VALUE, 4096, 0, max_normalized); // map function sucks
             int result = (reading - DEFAULT_VALUE) * max_normalized / (4096 - DEFAULT_VALUE);
 
@@ -83,7 +82,7 @@ class HallFilter {
                 normalized = result;
                 return normalized; 
             }
-            return -500;
+            return normalized;
         }
 
         int pressed() {

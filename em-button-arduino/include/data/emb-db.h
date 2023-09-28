@@ -268,7 +268,7 @@ class EmbButtonDB {
 
     String* getAll() {
       
-      // print all lines in the document (each newline is a new object) (objects are all json strings)
+      // print all lines in the document (each newline is a new record) (records are all json strings)
       String* database = new String[100];
 
       if(!SPIFFS.exists(this->file)) {

@@ -79,11 +79,8 @@ void loop() {
   }
 
   // use lastrecordedtime to disable the device after 45 seconds, and re-enable it after twice that time
-  if(millis() - lastRecordedTime > 45000 && enableDevice) {
+  if(millis() - lastRecordedTime > 180000 && enableDevice) {
     _disableDevice();
-    lastRecordedTime = millis();
-  } else if(millis() - lastRecordedTime > 90000 && !enableDevice) {
-    _enableDevice();
     lastRecordedTime = millis();
   }
 
