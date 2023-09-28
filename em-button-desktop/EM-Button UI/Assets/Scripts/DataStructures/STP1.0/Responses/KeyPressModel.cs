@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 /// <summary>
-/// Response when it pertains to device status (all OLED Monitor data and more).
+/// Response when it pertains to a keypress update.
 /// </summary>
 [System.Serializable]
 public class KeyPressResponseModel : STPResponseModel {

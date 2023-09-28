@@ -7,12 +7,12 @@ public struct STPCommand {
     public STPMethod method;
     public Dictionary<string, string> data;
 
-    public override string ToString() => prefix + "{" + apiRoute + "," + apiMethod + apiData + "}";
+    public override string ToString() => _prefix + "{" + _apiRoute + "," + _apiMethod + _apiData + "}";
     
-    private const string prefix = "STP1.0";
-    private string apiRoute { get { return "\"route\":\"" + route + "\""; } }
-    private string apiMethod { get { return "\"method\":\"" + method.ToString() + "\""; } }
-    private string apiData {
+    private const string _prefix = "STP1.0";
+    private string _apiRoute { get { return "\"route\":\"" + route + "\""; } }
+    private string _apiMethod { get { return "\"method\":\"" + method.ToString() + "\""; } }
+    private string _apiData {
         get {
             if (data == null) {
                 data = new Dictionary<string, string>();
