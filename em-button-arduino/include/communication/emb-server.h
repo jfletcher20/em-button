@@ -89,7 +89,7 @@ class EmbServer {
                 dataKeys[i] = displayManager->getKeys()[i].c_str();
                 data[i] = displayManager->getValues()[i].c_str();
             }
-            Serial.println(STP::createResponse(200, "Accessed data", dataKeys, data, displayManager->getKeysLength()));
+            Serial.println(STP::createResponse(200, "Accessed data", "current_value", displayManager->getJson().c_str()));
         }
 
         void getElectromagnetDataRoute() {

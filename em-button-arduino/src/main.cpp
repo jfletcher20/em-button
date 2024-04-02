@@ -57,17 +57,15 @@ void loop() {
 
   userButtonLogic(); // user button should always be available regardless of whether 
   if (enableDevice) {
-    if(emb.keyData.electromagnet_power == 1)
-      analogWrite(emb.keyData.electromagnet, (int)(emb.keyData.electromagnet_power * 10) + 245);
-    else Serial.println("STP1.0{\"status\":400,\"data\":{\"message\":\"Electromagnet power is less than 1. Rejected command.\"}}");
+    analogWrite(emb.keyData.electromagnet, (int)(emb.keyData.electromagnet_power * 20) + 235);
     int newReading = filter->normalize();
-    if (newReading > -11) {
+    if (newReading > -1) {
       displayManager.drawScene();
     }
     if (KeyboardLogic::getConnectionStatusUpdate(emb)) {
       displayManager.drawScene();
     }
-    if (KeyboardLogic::keyboardLogic(*filter)) { 
+    if (KeyboardLogic::keyboardLogic(*filter)) {
       counter++;
       if(counter > 15) { // if it refreshes too often, it causes lag
         counter = 0;

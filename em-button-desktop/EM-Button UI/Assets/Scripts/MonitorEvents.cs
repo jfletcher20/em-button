@@ -28,6 +28,9 @@ public class MonitorEvents : MonoBehaviour {
     Dictionary<string, object> empty = new Dictionary<string, object>();
     private Dictionary<string, object> specifyData() {
         string latest = serialMonitor.latest;
+        //if (latest.Contains("Accessed data")) {
+        //    return statusUpdate(latest);
+        //}
         if (latest.Contains("current_value")) {
             if (latest.Contains("hall sensor data")) return statusUpdate(latest, true);
             else return statusUpdate(latest);
